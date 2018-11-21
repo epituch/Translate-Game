@@ -1,7 +1,37 @@
-.center {
-    text-align: center;
-}
-
 .if-wrapper {
     padding: 5px 15%;
+}
+
+p {
+    font-size: 20px;
+    color: teal;
+}
+
+.result-div {
+    font-size: 35px;
+    margin: 1% 0;
+}
+
+#score {
+    color: teal;
+}
+
+#translated-text {
+    color: teal;
+}
+
+#garble-text-btn {
+    margin: 2%;
+}
+
+#results {
+    visibility: hidden;
+}
+
+nav {
+    background-color: darkgrey !important;
+}
+
+.nav-link {
+    font-size: 20px;
 }

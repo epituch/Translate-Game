@@ -1,6 +1,7 @@
-$(document).ready( () => {
+$(document).ready(() => {
     $('select').formSelect();
-    $('#garble-text-btn').click( () => {
-        alert("Handler for button called");
-    })
+    $(".dropdown-trigger").dropdown();
+    $('#garble-text-btn').click(() => {
+        $('#results').css('visibility', 'visible');
+    });
 });

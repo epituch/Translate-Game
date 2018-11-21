@@ -15,9 +15,27 @@
 </head>
 
 <body>
-    <div class="center">
+
+    <ul id="dropdown1" class="dropdown-content">
+        <li><a href="/login">Create Account</a></li>
+        <li><a href="/login">Login</a></li>
+        <li><a href="/login">Logout</a></li>
+    </ul>
+    <nav>
+        <div class="nav-wrapper">
+            <img src="/assets/TPartyLogo.png" alt="">
+            <ul class="right">
+                <li><a href="." class="nav-link">Play</a></li>
+                <li><a href="/leaderboard" class="nav-link">Leaderboards</a></li>
+                <li><a class="dropdown-trigger nav-link" href="#!" data-target="dropdown1">Account</a></li>
+            </ul>
+        </div>
+    </nav>
+
+
+    <div class="center-align">
         <h1>Think you can have the most garbled text? Are you up for the challenge?</h1>
-        <p>Select your languages, up to 10!</p>
+        <p>Select your languages, choose up to 10!</p>
 
         <div class="if-wrapper">
             <div class="input-field">
@@ -46,8 +64,22 @@
                 <input placeholder="Enter text to garble" type="text" class="validate">
                 <label for="first_name">First Name</label>
             </div>
+            <a class="waves-effect waves-light btn-large" id="garble-text-btn">Garble!!!</a>
         </div>
-        <a class="waves-effect waves-light btn-large center" id="garble-text-btn">Garble!!!</a>
+
+        <div id="results">
+            <div class="result-div">
+                <span>Your translated text: </span>
+                <span id="translated-text">garble garble garble!</span>
+            </div>
+
+            <div class="result-div">
+                <span>Score: </span>
+                <span id="score">16</span>
+            </div>
+        </div>
+
+    </div>
 </body>
 
 </html>
