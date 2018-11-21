@@ -7,16 +7,47 @@
     <title>Page Title</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" type="text/css" media="screen" href="mainpage.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha256-3edrmyuQ0w65f8gfBsqowzjJe2iM6n0nKciPUp8y+7E="
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
     <script src="mainpage.js"></script>
 </head>
 
 <body>
-    <h1>Translate Game</h1>
-    <div>
-        <p>
-            Select up to n languages to garble your text
-        </p>
-    </div>
+    <div class="center">
+        <h1>Think you can have the most garbled text? Are you up for the challenge?</h1>
+        <p>Select your languages, up to 10!</p>
+
+        <div class="if-wrapper">
+            <div class="input-field">
+                <select multiple>
+                    <option value="" disabled selected>Languages</option>
+                    <option value="En">English</option>
+                    <option value="Es">Spanish</option>
+                    <option value="Pl">Polish</option>
+                </select>
+                <label>Language Selection</label>
+            </div>
+        </div>
+        <div class="if-wrapper">
+            <div class="input-field">
+                <select>
+                    <option value="" disabled selected>Choose order</option>
+                    <option value="Al">Alphabetical</option>
+                    <option value="Rn">Random</option>
+                    <option value="RAl">Reverse Alphabetical</option>
+                </select>
+                <label>Translate Order</label>
+            </div>
+        </div>
+        <div class="if-wrapper">
+            <div class="input-field">
+                <input placeholder="Enter text to garble" type="text" class="validate">
+                <label for="first_name">First Name</label>
+            </div>
+        </div>
+        <a class="waves-effect waves-light btn-large center" id="garble-text-btn">Garble!!!</a>
 </body>
 
 </html>
