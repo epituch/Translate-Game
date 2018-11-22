@@ -1,0 +1,38 @@
+body {
+    background-image: url("../assets/background.png");
+    background-repeat: repeat;
+}
+
+#main-div {
+    background-color: whitesmoke;
+    border-radius: 3%;
+    width: 90%;
+    margin: 5% auto;
+}
+
+#logo {
+    margin-top: 5%;
+}
+
+.sisub {
+    font-size: 20px !important;
+    width: 38%;
+    margin: 1% 0;
+}
+
+#start-btn {
+    font-size: 30px !important;
+    width: 75%;
+    margin: 2% auto 10%;
+}
+
+.input-field {
+    width: 75%;
+    margin: 0 auto;
+}
+
+@media (min-width: 800px){
+    #main-div {
+        width: 35%;
+    }
+}

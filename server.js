@@ -29,3 +29,7 @@ app.get('/createuser', (req, res) => {
 app.get('/assets/TPartyLogo.png', (req, res) => {
     res.sendFile('assets/TPartyLogo.png', {"root": __dirname});
 });
+
+app.get('/assets/background.png', (req, res) => {
+    res.sendFile('assets/background.png', {"root": __dirname});
+});
