@@ -47,14 +47,16 @@ function sendLogin() {
             alert("Passwords do not match");
             return;
         }
-        else{
+        else {
             console.log("Success");
-            window.location.replace("..");
+            // redirect to mainpage
+            window.location.replace("/play");
         }
     }
     else {
         // check database for user
-
+        // redirect to mainpage
+        window.location.replace("/play");
     }
 }
 
@@ -96,6 +98,6 @@ function checkPassword(password) {
         return "valid";
     }
     else {
-        return "Password cannot contain non-standard ascii characters";
+        return "Password cannot contain non-standard characters";
     }
 }
