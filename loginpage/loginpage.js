@@ -49,13 +49,13 @@ function sendLogin() {
         }
         else {
             console.log("Success");
-            // redirect to mainpage
+            // redirect to playpage
             window.location.replace("/play");
         }
     }
     else {
         // check database for user
-        // redirect to mainpage
+        // redirect to playpage
         window.location.replace("/play");
     }
 }
