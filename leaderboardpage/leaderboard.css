@@ -1,0 +1,23 @@
+body {
+    background-image: url("../assets/background.png");
+    background-repeat: repeat;
+}
+
+#title {
+    color: white !important;
+}
+
+#table-div {
+    background-color: white;
+    width: 90%;
+    margin: 0 auto;
+    border-radius: 1%;
+}
+
+nav {
+    background-color: darkgrey !important;
+}
+
+.nav-link {
+    font-size: 20px;
+}
