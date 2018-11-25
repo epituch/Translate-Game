@@ -5,11 +5,10 @@ var app = express()
 var mysql = require('mysql')
 
 var databaseConfig = {
-    user: 'root',
-    password: 'daBoiRego7',
-    server: '127.0.0.1',
-    database: 'TParty',
-    port: 3306
+    user: 'tparty',
+    password: 'Test1234!',
+    host: 'den1.mysql6.gear.host',
+    database: 'tparty'
 };
 
 module.exports = {
@@ -28,8 +27,8 @@ module.exports = {
 
     query: function (sqlConnection, sqlQuery, next) {
         sqlConnection.query(sqlQuery, function(error, rows) {
-            if(err)
-                next(err)
+            if(error)
+                next(error)
 
             next(null, rows)
         });
