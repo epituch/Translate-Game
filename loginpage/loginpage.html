@@ -7,11 +7,38 @@
     <title>Page Title</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" type="text/css" media="screen" href="loginpage.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha256-3edrmyuQ0w65f8gfBsqowzjJe2iM6n0nKciPUp8y+7E="
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
     <script src="loginpage.js"></script>
 </head>
 
 <body>
-    <h1>Login Page</h1>
+    <div id="main-div">
+        <div class="center-align">
+            <img src="../assets/TPartyLogo.png" alt="Logo" class="center-align" id="logo">
+        </div>
+        <div class="center-align">
+            <a class="waves-effect waves-light btn disabled sisub" id="create-account-btn">Sign Up</a>
+            <a class="waves-effect waves-light btn sisub" id="login-btn">Sign In</a>
+        </div>
+        <div class="input-field">
+            <input id="username" type="text" class="validate">
+            <label for="username">Username</label>
+        </div>
+        <div class="input-field">
+            <input id="password" type="password" class="validate">
+            <label for="password">Password</label>
+        </div>
+        <div class="input-field">
+            <input id="confirm-password" type="password" class="validate">
+            <label for="confirm-password">Confirm Password</label>
+        </div>
+        <div class="center-align">
+            <a class="waves-effect waves-light btn-large" id="start-btn">Get Started!</a>
+        </div>
+    </div>
 </body>
 
 </html>
