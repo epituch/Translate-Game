@@ -1,7 +1,12 @@
+'use strict'
+
 let express = require('express');
 let path = require('path');
 let app = express();
 let db = require('./database.js');
+let languages = require("./languages.js")
+let googleTranslate = require('google-translate')('AIzaSyD253F7dYqiZbuSBAGl7DJYOLgMYUz1G4U');
+
 
 app.use(express.static(path.join(__dirname, 'mainpage')));
 app.use(express.static(path.join(__dirname, 'loginpage')));
@@ -13,22 +18,13 @@ let portNumber = 6969;
 app.listen(portNumber, () => console.log(`Server started on ${portNumber}`));
 
 app.get('/', (req, res) => {
-    res.sendFile('mainpage/mainpage.html', { "root": __dirname });
     db.init(function(err, res) {
         if(err)
         {
             console.error('Init Error:' + err);
             return false;
         }
-        let queryString = "SELECT * FROM tparty_scores";
-        db.query(res, queryString, function(error, q_res) {
-            if(error)
-            {
-                console.log('Query Error: ' + error);
-                return false;
-            }
-            console.log(q_res);
-        });
+        console.log("DB Init successful!")
     });
     res.redirect('/login');
 });
@@ -52,4 +48,45 @@ app.get('/assets/TPartyLogo.png', (req, res) => {
 
 app.get('/assets/background.png', (req, res) => {
     res.sendFile('assets/background.png', {"root": __dirname});
+});
+
+app.post('/new_user', function(req, res) {
+
+    let queryString;
+
+    db.init(function(err, conn) {
+        if(err)
+        {
+            console.error('Init Error:' + err);
+            return false;
+        }
+
+        queryString = "SELECT * FROM tparty_scores WHERE username=\'" + res.username + "\'";
+        db.query(conn, queryString, function(err, qres) {
+            if(err)
+            {
+                console.error('Query Error: ' + err);
+                res.send({status: 'Error!'});
+                return false;
+            }
+
+            if(qres.length != 0)
+            {
+                res.send({status: 'INVALID'});
+                return;
+            }
+
+            queryString = "INSERT INTO tparty_scores "
+            //queryString = "INSERT INTO tparty_scores (username, password, score) \'SET username=\'" + res.username + "\', password=\'" + res.password + "\', score=0\'";
+            db.query(conn, queryString, function(err, qres) {
+                if(err)
+                {
+                    console.error('Query Error: ' + err);
+                    res.send({status: 'Error!'});
+                    return false;
+                }
+                res.send({status: 'VALID'});
+            })
+        })
+    });
 });

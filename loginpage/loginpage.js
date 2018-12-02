@@ -1,6 +1,8 @@
+let exp =
+
 $(document).ready(() => {
-    $('#create-account-btn').click(signUp);
-    $('#login-btn').click(signIn);
+    $('#signup-btn').click(signUp);
+    $('#signin-btn').click(signIn);
     $('#start-btn').click(sendLogin);
 });
 
@@ -10,8 +12,8 @@ let onSignUpPage = true;
 // click event for the sign up button
 function signUp() {
     onSignUpPage = true;
-    $('#login-btn').removeClass('disabled');
-    $('#create-account-btn').addClass('disabled');
+    $('#signin-btn').removeClass('disabled');
+    $('#signup-btn').addClass('disabled');
     $('#start-btn').html('Get Started!');
     $('#confirm-password').css('display', 'block');
 }
@@ -19,8 +21,8 @@ function signUp() {
 // click event for the sign in button
 function signIn() {
     onSignUpPage = false;
-    $('#create-account-btn').removeClass('disabled');
-    $('#login-btn').addClass('disabled');
+    $('#signup-btn').removeClass('disabled');
+    $('#signin-btn').addClass('disabled');
     $('#start-btn').html('Login');
     $('#confirm-password').css('display', 'none');
 }
@@ -31,7 +33,7 @@ function sendLogin() {
     let confirmPassword = $('#confirm-password').val();
     console.log(`Username: ${username}, Password: ${password}, ConfirmPassword: ${confirmPassword}`);
     if (onSignUpPage) {
-        // check if username is valid 
+        // check if username is valid
         let err;
         if ((err = checkUserName(username)) != 'valid') {
             console.log('Username invalid');
@@ -48,9 +50,37 @@ function sendLogin() {
             return;
         }
         else {
+
+            // Verify the new username
+            var servResponse;
+            $.ajax({
+                url: '/new_user',
+                type: 'POST',
+                async: false,
+                data: {
+                    'username': username,
+                    'password': password
+                },
+
+                success: function(result){
+                    console.log(result)
+                    inLoop = false
+                },
+                error: function(err){
+                    console.log('Error: ${err}')
+                    inLoop = false
+                }
+            })
+
+            if(servResponse.status != "VALID")
+            {
+                alert("Username/Password already exists");
+                return;
+            }
+
             console.log("Success");
             // redirect to playpage
-            window.location.replace("/play");
+            //window.location.replace("/play");
         }
     }
     else {
@@ -61,7 +91,7 @@ function sendLogin() {
 }
 
 /*
-* returns Valid if the username is valid and 
+* returns Valid if the username is valid and
 * returns a string saying whats wrong if its not
 */
 function checkUserName(username) {
@@ -82,7 +112,7 @@ function checkUserName(username) {
 }
 
 /*
-* returns Valid if the password is valid and 
+* returns Valid if the password is valid and
 * returns a string saying whats wrong if its not
 */
 function checkPassword(password) {
