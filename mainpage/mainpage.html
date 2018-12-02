@@ -10,6 +10,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha256-3edrmyuQ0w65f8gfBsqowzjJe2iM6n0nKciPUp8y+7E="
         crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <script src="mainpage.js"></script>
@@ -23,7 +26,7 @@
             <ul id="nav-links" class="right">
                 <li><a href="/play" class="nav-link">Play</a></li>
                 <li><a href="/leaderboard" class="nav-link">Leaderboards</a></li>
-                <li><a href="/login" class="nav-link">Logout</a></li>            
+                <li><a href="/login" class="nav-link">Logout</a></li>
             </ul>
         </div>
     </nav> -->
@@ -52,15 +55,65 @@
 
         <div class="if-wrapper">
             <div class="input-field">
-                <select multiple>
-                    <option value="" disabled selected>Languages</option>
-                    <option value="En">English</option>
-                    <option value="Es">Spanish</option>
-                    <option value="Pl">Polish</option>
-                </select>
-                <label>Language Selection</label>
+                <input type="text" id="autocomplete-input" class="autocomplete">
+                <label for="autocomplete-input">Languages</label>
+                <div id="error-div">
+                    Error language does not exist
+                </div>
+            </div>
+            <div id="languages">
+                <div class="language">
+                    <span>English</span>
+                    <i class="material-icons tiny">close</i>
+                </div>
+                <div class="language">
+                    <span>aaaaa</span>
+                    <i class="material-icons tiny">close</i>
+                </div>
+                <div class="language">
+                    <span>bbbbbb</span>
+                    <i class="material-icons tiny">close</i>
+                </div>
+                <div class="language">
+                    <span>cccccc</span>
+                    <i class="material-icons tiny">close</i>
+                </div>
+                <div class="language">
+                    <span>dddddddd</span>
+                    <i class="material-icons tiny">close</i>
+                </div>
+                <div class="language">
+                    <span>eeeeeee</span>
+                    <i class="material-icons tiny">close</i>
+                </div>
+                <div class="language">
+                    <span>fffffff</span>
+                    <i class="material-icons tiny">close</i>
+                </div>
+                <div class="language">
+                    <span>English</span>
+                    <i class="material-icons tiny">close</i>
+                </div>
+                <div class="language">
+                    <span>English</span>
+                    <i class="material-icons tiny">close</i>
+                </div>
+                <div class="language">
+                    <span>English</span>
+                    <i class="material-icons tiny">close</i>
+                </div>
+                <div class="language">
+                    <span>English</span>
+                    <i class="material-icons tiny">close</i>
+                </div>
+                <div class="language">
+                    <span>English</span>
+                    <i class="material-icons tiny">close</i>
+                </div>
+
             </div>
         </div>
+        <!--
         <div class="if-wrapper">
             <div class="input-field">
                 <select>
@@ -71,7 +124,7 @@
                 </select>
                 <label>Translate Order</label>
             </div>
-        </div>
+        </div> -->
         <div class="if-wrapper">
             <div class="input-field">
                 <input placeholder="Enter text to garble" type="text" class="validate">
