@@ -1,4 +1,3 @@
-let selectedLanguages = [];
 let currId = 0;
 
 // TODO: call server for list of languages
@@ -22,12 +21,7 @@ function addToListOfLanguages(checkInput) {
     }
     else {
         addLanguageBox(languageSelected);
-        let langObject = {
-            "id": currId,
-            "language": languageSelected
-        }
         currId++;
-        selectedLanguages.push(langObject);
         M.Autocomplete.getInstance($('input.autocomplete')).close();
         $('input.autocomplete').val('');
     }
@@ -45,9 +39,20 @@ function addLanguageBox(language) {
 /*
 *   Removes the language that corresponds to the id
 */
-function remove(id){
+function remove(id) {
     $('#' + id).remove();
-    selectedLanguages = selectedLanguages.filter( langObject => langObject.id !== id);
+}
+
+/*
+*   Gets all the languages that are currently selected
+*/
+function getSelectedLanguages() {
+    let languageList = [];
+    $('#languages').find('div').each(function () {
+        let innerDivId = $(this).attr('id');
+        languageList.push($('#' + innerDivId + ' span').html());
+    });
+    return languageList;
 }
 
 $(document).ready(() => {
@@ -56,6 +61,8 @@ $(document).ready(() => {
     $(".dropdown-trigger").dropdown();
     $('#garble-text-btn').click(() => {
         $('#results').css('visibility', 'visible');
+        // TODO: send languages to the server
+        console.log(getSelectedLanguages());
     });
 
     $('input.autocomplete').autocomplete({
