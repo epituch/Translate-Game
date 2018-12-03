@@ -1,5 +1,6 @@
 let currId = 0;
 let numLanguages = 0;
+let debounceBool = true;
 
 // TODO: call server for list of languages
 let languageList = {
@@ -22,7 +23,7 @@ function addToListOfLanguages() {
         $('#error-div').css('display', 'block');
         return;
     }
-    else if(numLanguages > 10){
+    else if (numLanguages > 10) {
         $('#error-div').html('Error: You can only add up to 10 languages');
         $('#error-div').css('display', 'block');
     }
@@ -77,12 +78,17 @@ $(document).ready(() => {
     $('input.autocomplete').autocomplete({
         data: languageList,
         onAutocomplete: () => {
+            debounceBool = false;
             addToListOfLanguages();
+            // this prevents the function being called by the enter listener
+            setTimeout( () => {
+                debounceBool = true;
+            }, 100)
         }
     });
     $('input.autocomplete').on('keyup', (event) => {
         // listens for enter event inside the field
-        if (event.key === 'Enter') {
+        if (event.key === 'Enter' && debounceBool) {
             // key is enter add to list after verificiation
             addToListOfLanguages();
         }
