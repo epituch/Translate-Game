@@ -1,12 +1,59 @@
 let currId = 0;
 
 // TODO: call server for list of languages
-let languageList = {
-    "English": null,
-    "Spanish": null,
-    "Polish": null,
-    "Hindi": null
+let languageList = {};
+
+let translateConfig = {
+    sentence: '',
+    languages: ''
 };
+// {
+//   "sentence": "This is a test",
+//   "languages": ["endligh", "spanish"]
+// }
+
+
+function translateScore(){
+  var servResponse;
+  $.ajax({
+      url: '/translate_score',
+      type: 'GET',
+      async: false,
+      data: JSON.stringify(translateConfig),
+      contentType: "application/json; charset=utf-8",
+
+      success: function(result){
+          console.log(result)
+          servResponse = result;
+
+      },
+      error: function(err){
+          console.log('Error: ${err}')
+      }
+  })
+  return servResponse;
+
+}
+/*
+*   Gets the current language list
+*/
+function getLanguageList(){
+  //Get the language list
+  var servResponse;
+  $.ajax({
+      url: '/get_langs',
+      type: 'GET',
+      async: false,
+
+      success: function(result){
+          servResponse = result;
+      },
+      error: function(err){
+          console.log('Error: ${err}')
+      }
+  })
+  return servResponse;
+}
 
 /*
 *   Checks the text that in the box and adds it to html
@@ -55,7 +102,13 @@ function getSelectedLanguages() {
     return languageList;
 }
 
+function getText(){
+  let fullText = $('#text-box').val();
+  return fullText;
+}
+
 $(document).ready(() => {
+    languageList = getLanguageList();
     $('select').formSelect();
     $('.sidenav').sidenav();
     $(".dropdown-trigger").dropdown();
@@ -63,6 +116,15 @@ $(document).ready(() => {
         $('#results').css('visibility', 'visible');
         // TODO: send languages to the server
         console.log(getSelectedLanguages());
+        console.log(getText());
+        console.log(getLanguageList());
+        /////////////
+        // translateConfig["sentence"] = getText();
+        // translateConfig["languages"] =  getSelectedLanguages();
+        // let response = translateScore();
+        // $('#translated-text').val(response["sentence"]);
+        // $('#score').val(response["score"]);
+
     });
 
     $('input.autocomplete').autocomplete({
