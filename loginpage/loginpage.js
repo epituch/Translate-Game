@@ -34,6 +34,8 @@ function sendLogin() {
     let username = $('#username').val();
     let password = $('#password').val();
     let confirmPassword = $('#confirm-password').val();
+    userConfig.username = username;
+    userConfig.password = password;
     console.log(`Username: ${username}, Password: ${password}, ConfirmPassword: ${confirmPassword}`);
     if (onSignUpPage) {
         // check if username is valid
@@ -56,8 +58,6 @@ function sendLogin() {
 
             // Verify the new username
             var servResponse;
-            userConfig.username = username;
-            userConfig.password = password;
             $.ajax({
                 url: '/new_user',
                 type: 'POST',
@@ -98,19 +98,30 @@ function sendLogin() {
         }
     }
     else {
-        // Verify user
+        // Verify user and redirect to main page
+        var servResponse;
         $.ajax({
             url: '/verify_user',
-            type: 'GET',
+            type: 'POST',
+            async: false,
+            data: JSON.stringify(userConfig),
+            contentType: "application/json; charset=utf-8",
 
             success: function(result){
-
+                servResponse = result;
+                console.log(servResponse);
             },
             error: function(err){
-                console.log('Error: ${err}')
+                console.log('Error:' + JSON.stringify(err))
             }
         })
-        // redirect to playpage
+
+        if(servResponse.status != "VALID")
+        {
+            alert("Username/Password is invalid.")
+            return;
+        }
+
         window.location.replace("/play");
     }
 }

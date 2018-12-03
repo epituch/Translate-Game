@@ -75,6 +75,41 @@ app.post('/new_user', function(req, res) {
     });
 });
 
+app.post('/verify_user', function(req, res) {
+    db.init(function(err, conn) {
+        if(err)
+        {
+            console.error('Init Error:' + err);
+            res.send({status: 'Error/INVALID!'});
+            return false;
+        }
+
+        console.log(req.body)
+        let queryString = "SELECT username, password FROM tparty_scores WHERE username='" + req.body.username + "'";
+        db.query(conn, queryString, function(ierr, ires) {
+            if(ierr)
+            {
+                console.log('Query Error: ' + ierr)
+                res.send({status: 'Error/INVALID!'});
+                return false;
+            }
+
+            if(ires.length == 0)
+            {
+                res.send({status: 'Error/INVALID'});
+                return false;
+            }
+
+            if(ires[0].username == req.body.username && ires[0].password == req.body.password)
+            {
+                res.send({status: 'VALID'});
+                return true;
+            }
+            res.send({status: 'INVALID'});
+        });
+    });
+});
+
 // TODO: Add authorization after signup or login
 
 app.get('/play', (req, res) => {
