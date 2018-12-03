@@ -2,18 +2,12 @@ let currId = 0;
 let numLanguages = 0;
 let debounceBool = true;
 
-// TODO: call server for list of languages
 let languageList = {};
 
 let translateConfig = {
     sentence: '',
     languages: ''
 };
-// {
-//   "sentence": "This is a test",
-//   "languages": ["endligh", "spanish"]
-// }
-
 
 function translateScore(){
   var servResponse;
@@ -21,10 +15,9 @@ function translateScore(){
       url: '/translate_score',
       type: 'GET',
       async: false,
-      //data: JSON.stringify(translateConfig),
       data: {
         sentence: translateConfig["sentence"],
-        languages: translateConfig["langauges"]
+        languages: translateConfig["languages"]
       },
       contentType: "application/json; charset=utf-8",
 
@@ -108,11 +101,12 @@ function remove(id) {
 *   Gets all the languages that are currently selected
 */
 function getSelectedLanguages() {
-    let languageList = [];
+    let languageList = "";
     $('#languages').find('div').each(function () {
         let innerDivId = $(this).attr('id');
-        languageList.push($('#' + innerDivId + ' span').html());
+        languageList += ($('#' + innerDivId + ' span').html() + ",");
     });
+    languageList += 'English';
     return languageList;
 }
 
@@ -128,17 +122,11 @@ $(document).ready(() => {
     $(".dropdown-trigger").dropdown();
     $('#garble-text-btn').click(() => {
         $('#results').css('visibility', 'visible');
-        // TODO: send languages to the server
-        console.log(getSelectedLanguages());
-        console.log(getText());
-        console.log(getLanguageList());
-        /////////////
-        // translateConfig["sentence"] = getText();
-        // translateConfig["languages"] =  getSelectedLanguages();
-        // let response = translateScore();
-        // $('#translated-text').val(response["sentence"]);
-        // $('#score').val(response["score"]);
-
+        translateConfig["sentence"] = getText();
+        translateConfig["languages"] =  getSelectedLanguages();
+        let response = translateScore();
+        $('#translated-text').html(response["sentence"]);
+        $('#score').html(response["score"]);
     });
 
     $('input.autocomplete').autocomplete({
@@ -149,7 +137,7 @@ $(document).ready(() => {
             // this prevents the function being called by the enter listener
             setTimeout( () => {
                 debounceBool = true;
-            }, 100)
+            }, 400)
         }
     });
     $('input.autocomplete').on('keyup', (event) => {

@@ -55,6 +55,7 @@ i.tiny {
 
 #translated-text {
     color: teal;
+    font-style: italic;
 }
 
 #garble-text-btn {
