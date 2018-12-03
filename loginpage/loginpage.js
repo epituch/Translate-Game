@@ -1,4 +1,7 @@
-let exp =
+let userConfig = {
+    username: '',
+    password: ''
+};
 
 $(document).ready(() => {
     $('#signup-btn').click(signUp);
@@ -53,14 +56,13 @@ function sendLogin() {
 
             // Verify the new username
             var servResponse;
+            userConfig.username = username;
+            userConfig.password = password;
             $.ajax({
                 url: '/new_user',
                 type: 'POST',
                 async: false,
-                data: JSON.stringify({
-                    'username': username,
-                    'password': password
-                }),
+                data: JSON.stringify(userConfig),
                 contentType: "application/json; charset=utf-8",
 
                 success: function(result){
@@ -80,12 +82,34 @@ function sendLogin() {
             }
 
             console.log("Success");
-            // redirect to playpage
-            //window.location.replace("/play");
+
+            // Redirect to main page
+            $.ajax({
+                url: '/play',
+                type: 'GET',
+
+                success: function(result){
+                    window.location.replace("/play")
+                },
+                error: function(err){
+                }
+            })
+
         }
     }
     else {
-        // check database for user
+        // Verify user
+        $.ajax({
+            url: '/verify_user',
+            type: 'GET',
+
+            success: function(result){
+
+            },
+            error: function(err){
+                console.log('Error: ${err}')
+            }
+        })
         // redirect to playpage
         window.location.replace("/play");
     }
