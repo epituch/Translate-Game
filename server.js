@@ -19,7 +19,6 @@ let portNumber = 6969;
 app.listen(portNumber, () => console.log(`Server started on ${portNumber}...`));
 
 app.get('/', (req, res) => {
-
     res.redirect('/login');
 });
 
@@ -43,6 +42,7 @@ app.post('/new_user', function (req, res) {
     db.init(function (err, conn) {
         if (err) {
             console.error('Init Error:' + err);
+            res.send({ status: 'INVALID' });
             return false;
         }
 
@@ -50,20 +50,20 @@ app.post('/new_user', function (req, res) {
         db.query(conn, queryString, function (ierr, ires) {
             if (ierr) {
                 console.log('Query Error: ' + ierr)
-                res.send({ status: 'Error/INVALID!' });
+                res.send({ status: 'INVALID' });
                 return false;
             }
 
             if (ires.length != 0) {
-                res.send({ status: 'Error/INVALID' });
+                res.send({ status: 'INVALID' });
                 return;
             }
 
-            queryString = "INSERT INTO tparty_scores SET username='" + req.body.username + "', password='" + req.body.password + "', score=1";
+            queryString = "INSERT INTO tparty_scores SET username='" + req.body.username + "', password='" + req.body.password + "', score=0";
             db.query(conn, queryString, function (qerr, qres) {
                 if (err) {
                     console.log('Query Error: ' + err);
-                    res.send({ status: 'Error/INVALID!' });
+                    res.send({ status: 'INVALID' });
                     return false;
                 }
                 res.send({ status: 'VALID' });
@@ -99,6 +99,7 @@ app.post('/verify_user', function (req, res) {
                 return true;
             }
             res.send({ status: 'INVALID' });
+
         });
     });
 });
@@ -112,10 +113,10 @@ app.get('/get_langs', (req, res) => {
 
 app.get('/translate_score', (req, res) => {
 
-    console.log(req.body)
+    console.log(req.query)
 
-    var translate_list = req.body.languages;
-    var sentence = req.body.sentence;
+    var translate_list = req.query.languages.split(",");
+    var sentence = req.query.sentence;
     var lang_codes = [];
     var response = {};
 
@@ -123,9 +124,14 @@ app.get('/translate_score', (req, res) => {
         lang_codes.push(languages.getCode(translate_list[i]));
     }
 
-    translateAsync(sentence, lang_codes).then(function(result){
-        console.log("HEY: " + result);
+    translateAsync(sentence, lang_codes).then(function(result) {
+        console.log(result)
+
+        // TODO: Add language weights to this calculation
+        var score = Math.round(levenDistance(sentence, result) * 100 * 2/sentence.length)
+
         response['sentence'] = result;
+        response['score'] = score;
 
         res.send(response);
     })
@@ -157,10 +163,70 @@ async function translateAsync(sentence, lang_codes) {
         }
 
         sentence = await translate(sentence, from, lang_codes[i]);
-        console.log(sentence);
     }
     return sentence;
 }
+
+function levenDistance(x,y) {
+    let dp = Array.matrix(x.length + 1, y.length + 1, 0);
+
+    for (var i = 0;i <= x.length;i++)
+    {
+        for(var j = 0;j <= y.length;j++)
+        {
+            if(i == 0)
+            {
+                dp[i][j] = j;
+            }
+            else if(j == 0)
+            {
+                dp[i][j] = i
+            }
+            else
+            {
+                dp[i][j] = Math.min(dp[i - 1][j - 1] + costOfSubstitution(x.charAt(i - 1), y.charAt(j - 1)), dp[i - 1][j] + 1, dp[i][j - 1] + 1);
+            }
+        }
+    }
+    //console.log(dp);
+    return dp[x.length][y.length]
+}
+
+function costOfSubstitution(a, b) {
+    return a == b ? 0 : 1;
+}
+
+Array.matrix = function(numrows, numcols, initial) {
+    var arr = [];
+    for (var i = 0; i < numrows; ++i) {
+       var columns = [];
+       for (var j = 0; j < numcols; ++j) {
+          columns[j] = initial;
+       }
+       arr[i] = columns;
+     }
+     return arr;
+}
+
+app.get('/leaderboard', function(req, res) {
+    db.init(function (err, conn) {
+        if (err) {
+            console.error('Init Error:' + err);
+            return false;
+        }
+
+        let queryString = "SELECT username, score FROM tparty_scores ORDER BY score DESC";
+        db.query(conn, queryString, function (ierr, ires) {
+            if (ierr) {
+                console.log('Query Error: ' + ierr)
+                res.send({ status: 'Error/INVALID!' });
+                return false;
+            }
+
+            res.send(ires);
+        });
+    });
+});
 
 app.get('/play', (req, res) => {
     res.sendFile('mainpage/mainpage.html', { "root": __dirname });
