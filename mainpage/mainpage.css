@@ -9,8 +9,16 @@ body {
 }
 
 p {
-    font-size: 20px;
+    font-size: 25px;
     color: teal;
+}
+
+#main-header {
+    margin: 2% 0 0;
+}
+
+#submain-header {
+    margin: 0;
 }
 
 .result-div {
