@@ -57,24 +57,25 @@ function sendLogin() {
                 url: '/new_user',
                 type: 'POST',
                 async: false,
-                data: {
+                data: JSON.stringify({
                     'username': username,
                     'password': password
-                },
+                }),
+                contentType: "application/json; charset=utf-8",
 
                 success: function(result){
                     console.log(result)
-                    inLoop = false
+                    servResponse = result;
+
                 },
                 error: function(err){
                     console.log('Error: ${err}')
-                    inLoop = false
                 }
             })
 
             if(servResponse.status != "VALID")
             {
-                alert("Username/Password already exists");
+                alert("Username already exists");
                 return;
             }
 

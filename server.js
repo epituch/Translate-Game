@@ -1,13 +1,14 @@
 'use strict'
 
 let express = require('express');
+var bodyParser = require('body-parser');
 let path = require('path');
 let app = express();
 let db = require('./database.js');
 let languages = require("./languages.js")
 let googleTranslate = require('google-translate')('AIzaSyD253F7dYqiZbuSBAGl7DJYOLgMYUz1G4U');
 
-
+app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'mainpage')));
 app.use(express.static(path.join(__dirname, 'loginpage')));
 app.use(express.static(path.join(__dirname, 'leaderboardpage')));
@@ -18,14 +19,6 @@ let portNumber = 6969;
 app.listen(portNumber, () => console.log(`Server started on ${portNumber}`));
 
 app.get('/', (req, res) => {
-    db.init(function(err, res) {
-        if(err)
-        {
-            console.error('Init Error:' + err);
-            return false;
-        }
-        console.log("DB Init successful!")
-    });
     res.redirect('/login');
 });
 
@@ -61,32 +54,31 @@ app.post('/new_user', function(req, res) {
             return false;
         }
 
-        queryString = "SELECT * FROM tparty_scores WHERE username=\'" + res.username + "\'";
-        db.query(conn, queryString, function(err, qres) {
-            if(err)
+        queryString = "SELECT * FROM tparty_scores WHERE username='" + req.body.username + "'";
+        db.query(conn, queryString, function(ierr, ires) {
+            if(ierr)
             {
-                console.error('Query Error: ' + err);
-                res.send({status: 'Error!'});
+                console.log('Query Error: ' + ierr)
+                res.send({status: 'Error/INVALID!'});
                 return false;
             }
 
-            if(qres.length != 0)
+            if(ires.length != 0)
             {
-                res.send({status: 'INVALID'});
+                res.send({status: 'Error/INVALID'});
                 return;
             }
 
-            queryString = "INSERT INTO tparty_scores "
-            //queryString = "INSERT INTO tparty_scores (username, password, score) \'SET username=\'" + res.username + "\', password=\'" + res.password + "\', score=0\'";
-            db.query(conn, queryString, function(err, qres) {
+            queryString = "INSERT INTO tparty_scores SET username='" + req.body.username + "', password='" + req.body.password + "', score=1";
+            db.query(conn, queryString, function(qerr, qres) {
                 if(err)
                 {
-                    console.error('Query Error: ' + err);
-                    res.send({status: 'Error!'});
+                    console.log('Query Error: ' + err);
+                    res.send({status: 'Error/INVALID!'});
                     return false;
                 }
                 res.send({status: 'VALID'});
-            })
-        })
+            });
+        });
     });
 });
