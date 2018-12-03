@@ -16,9 +16,10 @@ app.use(express.static(path.join(__dirname, 'createuserpage')));
 app.use(express.static(path.join(__dirname, 'assets')));
 let portNumber = 6969;
 
-app.listen(portNumber, () => console.log(`Server started on ${portNumber}`));
+app.listen(portNumber, () => console.log(`Server started on ${portNumber}...`));
 
 app.get('/', (req, res) => {
+
     res.redirect('/login');
 });
 
@@ -28,89 +29,138 @@ app.get('/login', (req, res) => {
 
 // TODO fix this, this is probably the wrong way to send assests
 app.get('/assets/TPartyLogo.png', (req, res) => {
-    res.sendFile('assets/TPartyLogo.png', {"root": __dirname});
+    res.sendFile('assets/TPartyLogo.png', { "root": __dirname });
 });
 
 app.get('/assets/background.png', (req, res) => {
-    res.sendFile('assets/background.png', {"root": __dirname});
+    res.sendFile('assets/background.png', { "root": __dirname });
 });
 
-app.post('/new_user', function(req, res) {
+app.post('/new_user', function (req, res) {
 
     let queryString;
 
-    db.init(function(err, conn) {
-        if(err)
-        {
+    db.init(function (err, conn) {
+        if (err) {
             console.error('Init Error:' + err);
             return false;
         }
 
         queryString = "SELECT * FROM tparty_scores WHERE username='" + req.body.username + "'";
-        db.query(conn, queryString, function(ierr, ires) {
-            if(ierr)
-            {
+        db.query(conn, queryString, function (ierr, ires) {
+            if (ierr) {
                 console.log('Query Error: ' + ierr)
-                res.send({status: 'Error/INVALID!'});
+                res.send({ status: 'Error/INVALID!' });
                 return false;
             }
 
-            if(ires.length != 0)
-            {
-                res.send({status: 'Error/INVALID'});
+            if (ires.length != 0) {
+                res.send({ status: 'Error/INVALID' });
                 return;
             }
 
             queryString = "INSERT INTO tparty_scores SET username='" + req.body.username + "', password='" + req.body.password + "', score=1";
-            db.query(conn, queryString, function(qerr, qres) {
-                if(err)
-                {
+            db.query(conn, queryString, function (qerr, qres) {
+                if (err) {
                     console.log('Query Error: ' + err);
-                    res.send({status: 'Error/INVALID!'});
+                    res.send({ status: 'Error/INVALID!' });
                     return false;
                 }
-                res.send({status: 'VALID'});
+                res.send({ status: 'VALID' });
             });
         });
     });
 });
 
-app.post('/verify_user', function(req, res) {
-    db.init(function(err, conn) {
-        if(err)
-        {
+app.post('/verify_user', function (req, res) {
+    db.init(function (err, conn) {
+        if (err) {
             console.error('Init Error:' + err);
-            res.send({status: 'Error/INVALID!'});
+            res.send({ status: 'Error/INVALID!' });
             return false;
         }
 
         console.log(req.body)
         let queryString = "SELECT username, password FROM tparty_scores WHERE username='" + req.body.username + "'";
-        db.query(conn, queryString, function(ierr, ires) {
-            if(ierr)
-            {
+        db.query(conn, queryString, function (ierr, ires) {
+            if (ierr) {
                 console.log('Query Error: ' + ierr)
-                res.send({status: 'Error/INVALID!'});
+                res.send({ status: 'Error/INVALID!' });
                 return false;
             }
 
-            if(ires.length == 0)
-            {
-                res.send({status: 'Error/INVALID'});
+            if (ires.length == 0) {
+                res.send({ status: 'Error/INVALID' });
                 return false;
             }
 
-            if(ires[0].username == req.body.username && ires[0].password == req.body.password)
-            {
-                res.send({status: 'VALID'});
+            if (ires[0].username == req.body.username && ires[0].password == req.body.password) {
+                res.send({ status: 'VALID' });
                 return true;
             }
-            res.send({status: 'INVALID'});
+            res.send({ status: 'INVALID' });
         });
     });
 });
 
 // TODO: Add authorization after signup or login
+
+app.get('/get_langs', (req, res) => {
+    var names = languages.getLanguageNames();
+    res.send(names);
+});
+
+app.get('/translate_score', (req, res) => {
+
+    console.log(req.body)
+
+    var translate_list = req.body.languages;
+    var sentence = req.body.sentence;
+    var lang_codes = [];
+    var response = {};
+
+    for (var i = 0; i < translate_list.length; i++) {
+        lang_codes.push(languages.getCode(translate_list[i]));
+    }
+
+    translateAsync(sentence, lang_codes).then(function(result){
+        console.log("HEY: " + result);
+        response['sentence'] = result;
+
+        res.send(response);
+    })
+});
+
+function translate(sentence, from, lang) {
+    return new Promise(function (resolve) {
+        if(from == lang)
+        {
+            resolve(sentence);
+        }
+        else
+        {
+            googleTranslate.translate(sentence, from, lang, function(err, translations) {
+                resolve(translations.translatedText);
+            });
+        }
+    })
+}
+
+async function translateAsync(sentence, lang_codes) {
+    var from = "en";
+
+    for(var i = 0;i < lang_codes.length;i++)
+    {
+        if(i > 0)
+        {
+            from = lang_codes[i-1];
+        }
+
+        sentence = await translate(sentence, from, lang_codes[i]);
+        console.log(sentence);
+    }
+    return sentence;
+}
 
 app.get('/play', (req, res) => {
     res.sendFile('mainpage/mainpage.html', { "root": __dirname });
