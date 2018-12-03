@@ -123,11 +123,11 @@ app.get('/translate_score', (req, res) => {
         lang_codes.push(languages.getCode(translate_list[i]));
     }
 
-    translateAsync(sentence, lang_codes).then(function(result) {
+    translateAsync(sentence, lang_codes).then(function (result) {
         console.log("HEY: " + result)
 
         // TODO: Add language weights to this calculation
-        var score = Math.round(levenDistance(sentence, result) * 100 * 2/sentence.length)
+        var score = Math.round(levenDistance(sentence, result) * 100 * 2 / sentence.length)
 
         response['sentence'] = result;
         response['score'] = score;
@@ -138,13 +138,11 @@ app.get('/translate_score', (req, res) => {
 
 function translate(sentence, from, lang) {
     return new Promise(function (resolve) {
-        if(from == lang)
-        {
+        if (from == lang) {
             resolve(sentence);
         }
-        else
-        {
-            googleTranslate.translate(sentence, from, lang, function(err, translations) {
+        else {
+            googleTranslate.translate(sentence, from, lang, function (err, translations) {
                 resolve(translations.translatedText);
             });
         }
@@ -154,11 +152,9 @@ function translate(sentence, from, lang) {
 async function translateAsync(sentence, lang_codes) {
     var from = "en";
 
-    for(var i = 0;i < lang_codes.length;i++)
-    {
-        if(i > 0)
-        {
-            from = lang_codes[i-1];
+    for (var i = 0; i < lang_codes.length; i++) {
+        if (i > 0) {
+            from = lang_codes[i - 1];
         }
 
         sentence = await translate(sentence, from, lang_codes[i]);
@@ -166,23 +162,18 @@ async function translateAsync(sentence, lang_codes) {
     return sentence;
 }
 
-function levenDistance(x,y) {
+function levenDistance(x, y) {
     let dp = Array.matrix(x.length + 1, y.length + 1, 0);
 
-    for (var i = 0;i <= x.length;i++)
-    {
-        for(var j = 0;j <= y.length;j++)
-        {
-            if(i == 0)
-            {
+    for (var i = 0; i <= x.length; i++) {
+        for (var j = 0; j <= y.length; j++) {
+            if (i == 0) {
                 dp[i][j] = j;
             }
-            else if(j == 0)
-            {
+            else if (j == 0) {
                 dp[i][j] = i
             }
-            else
-            {
+            else {
                 dp[i][j] = Math.min(dp[i - 1][j - 1] + costOfSubstitution(x.charAt(i - 1), y.charAt(j - 1)), dp[i - 1][j] + 1, dp[i][j - 1] + 1);
             }
         }
@@ -195,19 +186,19 @@ function costOfSubstitution(a, b) {
     return a == b ? 0 : 1;
 }
 
-Array.matrix = function(numrows, numcols, initial) {
+Array.matrix = function (numrows, numcols, initial) {
     var arr = [];
     for (var i = 0; i < numrows; ++i) {
-       var columns = [];
-       for (var j = 0; j < numcols; ++j) {
-          columns[j] = initial;
-       }
-       arr[i] = columns;
-     }
-     return arr;
+        var columns = [];
+        for (var j = 0; j < numcols; ++j) {
+            columns[j] = initial;
+        }
+        arr[i] = columns;
+    }
+    return arr;
 }
 
-app.get('/leaderboard', function(req, res) {
+app.get('/leaderboarddata', function (req, res) {
     db.init(function (err, conn) {
         if (err) {
             console.error('Init Error:' + err);
