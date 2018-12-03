@@ -19,7 +19,11 @@ function translateScore(){
       url: '/translate_score',
       type: 'GET',
       async: false,
-      data: JSON.stringify(translateConfig),
+      //data: JSON.stringify(translateConfig),
+      data: {
+        sentence: translateConfig["sentence"],
+        languages: translateConfig["langauges"]
+      },
       contentType: "application/json; charset=utf-8",
 
       success: function(result){
