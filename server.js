@@ -99,6 +99,7 @@ app.post('/verify_user', function (req, res) {
                 return true;
             }
             res.send({ status: 'INVALID' });
+
         });
     });
 });
@@ -112,10 +113,10 @@ app.get('/get_langs', (req, res) => {
 
 app.get('/translate_score', (req, res) => {
 
-    console.log(req.body)
+    console.log(req.query)
 
-    var translate_list = req.body.languages;
-    var sentence = req.body.sentence;
+    var translate_list = req.query.languages.split(",");
+    var sentence = req.query.sentence;
     var lang_codes = [];
     var response = {};
 
@@ -124,7 +125,7 @@ app.get('/translate_score', (req, res) => {
     }
 
     translateAsync(sentence, lang_codes).then(function(result) {
-        console.log("HEY: " + result)
+        console.log(result)
 
         // TODO: Add language weights to this calculation
         var score = Math.round(levenDistance(sentence, result) * 100 * 2/sentence.length)
