@@ -9,8 +9,16 @@ body {
 }
 
 p {
-    font-size: 20px;
+    font-size: 25px;
     color: teal;
+}
+
+#main-header {
+    margin: 2% 0 0;
+}
+
+#submain-header {
+    margin: 0;
 }
 
 .result-div {
@@ -58,7 +66,6 @@ i.tiny {
 }
 
 #error-div {
-    width: 240px;
     height: 20px;
     color:red;
     margin: 0;
