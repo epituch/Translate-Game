@@ -1,6 +1,11 @@
+let userConfig = {
+    username: '',
+    password: ''
+};
+
 $(document).ready(() => {
-    $('#create-account-btn').click(signUp);
-    $('#login-btn').click(signIn);
+    $('#signup-btn').click(signUp);
+    $('#signin-btn').click(signIn);
     $('#start-btn').click(sendLogin);
 });
 
@@ -10,8 +15,8 @@ let onSignUpPage = true;
 // click event for the sign up button
 function signUp() {
     onSignUpPage = true;
-    $('#login-btn').removeClass('disabled');
-    $('#create-account-btn').addClass('disabled');
+    $('#signin-btn').removeClass('disabled');
+    $('#signup-btn').addClass('disabled');
     $('#start-btn').html('Get Started!');
     $('#confirm-password').css('display', 'block');
 }
@@ -19,8 +24,8 @@ function signUp() {
 // click event for the sign in button
 function signIn() {
     onSignUpPage = false;
-    $('#create-account-btn').removeClass('disabled');
-    $('#login-btn').addClass('disabled');
+    $('#signup-btn').removeClass('disabled');
+    $('#signin-btn').addClass('disabled');
     $('#start-btn').html('Login');
     $('#confirm-password').css('display', 'none');
 }
@@ -29,9 +34,11 @@ function sendLogin() {
     let username = $('#username').val();
     let password = $('#password').val();
     let confirmPassword = $('#confirm-password').val();
+    userConfig.username = username;
+    userConfig.password = password;
     console.log(`Username: ${username}, Password: ${password}, ConfirmPassword: ${confirmPassword}`);
     if (onSignUpPage) {
-        // check if username is valid 
+        // check if username is valid
         let err;
         if ((err = checkUserName(username)) != 'valid') {
             console.log('Username invalid');
@@ -48,20 +55,79 @@ function sendLogin() {
             return;
         }
         else {
+
+            // Verify the new username
+            var servResponse;
+            $.ajax({
+                url: '/new_user',
+                type: 'POST',
+                async: false,
+                data: JSON.stringify(userConfig),
+                contentType: "application/json; charset=utf-8",
+
+                success: function(result){
+                    console.log(result)
+                    servResponse = result;
+
+                },
+                error: function(err){
+                    console.log('Error: ${err}')
+                }
+            })
+
+            if(servResponse.status != "VALID")
+            {
+                alert("Username already exists");
+                return;
+            }
+
             console.log("Success");
-            // redirect to playpage
-            window.location.replace("/play");
+
+            // Redirect to main page
+            $.ajax({
+                url: '/play',
+                type: 'GET',
+
+                success: function(result){
+                    window.location.replace("/play")
+                },
+                error: function(err){
+                }
+            })
+
         }
     }
     else {
-        // check database for user
-        // redirect to playpage
+        // Verify user and redirect to main page
+        var servResponse;
+        $.ajax({
+            url: '/verify_user',
+            type: 'POST',
+            async: false,
+            data: JSON.stringify(userConfig),
+            contentType: "application/json; charset=utf-8",
+
+            success: function(result){
+                servResponse = result;
+                console.log(servResponse);
+            },
+            error: function(err){
+                console.log('Error:' + JSON.stringify(err))
+            }
+        })
+
+        if(servResponse.status != "VALID")
+        {
+            alert("Username/Password is invalid.")
+            return;
+        }
+
         window.location.replace("/play");
     }
 }
 
 /*
-* returns Valid if the username is valid and 
+* returns Valid if the username is valid and
 * returns a string saying whats wrong if its not
 */
 function checkUserName(username) {
@@ -82,7 +148,7 @@ function checkUserName(username) {
 }
 
 /*
-* returns Valid if the password is valid and 
+* returns Valid if the password is valid and
 * returns a string saying whats wrong if its not
 */
 function checkPassword(password) {
