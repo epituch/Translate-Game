@@ -9,6 +9,9 @@
     <link rel="stylesheet" type="text/css" media="screen" href="mainpage.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <script src="mainpage.js"></script>
@@ -51,26 +54,15 @@
 
         <div class="if-wrapper">
             <div class="input-field">
-                <select multiple>
-                    <option value="" disabled selected>Languages</option>
-                    <option value="En">English</option>
-                    <option value="Es">Spanish</option>
-                    <option value="Pl">Polish</option>
-                </select>
-                <label>Language Selection</label>
+                <input type="text" id="autocomplete-input" class="autocomplete">
+                <label for="autocomplete-input">Languages</label>
+                <div id="error-div">
+                    Error language does not exist
+                </div>
             </div>
+            <div id="languages"></div>
         </div>
-        <div class="if-wrapper">
-            <div class="input-field">
-                <select>
-                    <option value="" disabled selected>Choose order</option>
-                    <option value="Al">Alphabetical</option>
-                    <option value="Rn">Random</option>
-                    <option value="RAl">Reverse Alphabetical</option>
-                </select>
-                <label>Translate Order</label>
-            </div>
-        </div>
+
         <div class="if-wrapper">
             <div class="input-field">
                 <input placeholder="Enter text to garble" type="text" class="validate">
