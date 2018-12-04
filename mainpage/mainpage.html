@@ -7,15 +7,81 @@
     <title>Page Title</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" type="text/css" media="screen" href="mainpage.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <script src="mainpage.js"></script>
 </head>
 
 <body>
-    <h1>Translate Game</h1>
-    <div>
-        <p>
-            Select up to n languages to garble your text
-        </p>
+
+    <!-- <nav>
+        <div class="nav-wrapper">
+            <img src="/assets/TPartyLogo.png" alt="Logo" class="hide-on-small-only">
+            <ul id="nav-links" class="right">
+                <li><a href="/play" class="nav-link">Play</a></li>
+                <li><a href="/leaderboard" class="nav-link">Leaderboards</a></li>
+                <li><a href="/login" class="nav-link">Logout</a></li>
+            </ul>
+        </div>
+    </nav> -->
+
+    <nav>
+        <div class="nav-wrapper">
+            <img src="/assets/TPartyLogo.png" alt="Logo" class="brand-logo">
+            <a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+            <ul class="right hide-on-med-and-down">
+                <li><a href="/play" class="nav-link">Play</a></li>
+                <li><a href="/leaderboard" class="nav-link">Leaderboards</a></li>
+                <li><a href="/login" class="nav-link">Logout</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <ul class="sidenav" id="mobile-demo">
+        <li><a href="/play" class="nav-link">Play</a></li>
+        <li><a href="/leaderboard" class="nav-link">Leaderboards</a></li>
+        <li><a href="/login" class="nav-link">Logout</a></li>
+    </ul>
+
+    <div class="center-align">
+        <h2 id="main-header">Think you can have the most garbled text?</h2>
+        <h2 id="submain-header">Are you up for the challenge?</h2>
+        <p>Select your languages, choose up to 10!</p>
+
+        <div class="if-wrapper">
+            <div class="input-field">
+                <input type="text" id="autocomplete-input" class="autocomplete">
+                <label for="autocomplete-input">Languages</label>
+                <div id="error-div"></div>
+            </div>
+            <div id="languages"></div>
+        </div>
+
+        <div class="if-wrapper">
+            <div class="input-field">
+                <input placeholder="Enter text to garble" id="text-box" type="text" class="validate">
+                <label for="first_name">Input Garbled Text</label>
+            </div>
+            <a class="waves-effect waves-light btn-large" id="garble-text-btn">Garble!!!</a>
+        </div>
+
+        <div id="results">
+            <div class="result-div">
+                <span>Your translated text: </span>
+                <span id="translated-text">garble garble garble!</span>
+            </div>
+
+            <div class="result-div">
+                <span>Score: </span>
+                <span id="score">16</span>
+            </div>
+        </div>
+
     </div>
 </body>
 

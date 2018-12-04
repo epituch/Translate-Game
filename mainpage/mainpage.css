@@ -1,0 +1,83 @@
+@import url('https://fonts.googleapis.com/css?family=Karla');
+
+body {
+    font-family: 'Karla', sans-serif;
+}
+
+.if-wrapper {
+    padding: 5px 15%;
+}
+
+p {
+    font-size: 25px;
+    color: teal;
+}
+
+#main-header {
+    margin: 2% 0 0;
+}
+
+#submain-header {
+    margin: 0;
+}
+
+.result-div {
+    font-size: 35px;
+    margin: 1% 0;
+}
+
+#languages {
+    text-align: start;
+}
+
+.language {
+    display: inline-block;
+    font-size: 13px;
+    font-weight: 500;
+    color: #505050;
+    line-height: 25px;
+    padding: 0 8px;
+    margin: 2px 6px;
+    border-radius: 16px;
+    background-color: #DDDDDD;
+}
+
+i.tiny {
+    cursor: pointer;
+    float: right;
+    line-height: 25px;
+    padding-left: 2px;
+}
+
+#score {
+    color: teal;
+}
+
+#translated-text {
+    color: teal;
+    font-style: italic;
+}
+
+#garble-text-btn {
+    margin: 2%;
+}
+
+#results {
+    visibility: hidden;
+}
+
+#error-div {
+    height: 20px;
+    color:red;
+    margin: 0;
+    text-align: start;
+    display: none;
+}
+
+nav {
+    background-color: darkgrey !important;
+}
+
+.nav-link {
+    font-size: 20px;
+}
