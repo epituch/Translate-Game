@@ -1,8 +1,3 @@
-let userConfig = {
-    username: '',
-    password: ''
-};
-
 $(document).ready(() => {
     $('#signup-btn').click(signUp);
     $('#signin-btn').click(signIn);
@@ -34,9 +29,11 @@ function sendLogin() {
     let username = $('#username').val();
     let password = $('#password').val();
     let confirmPassword = $('#confirm-password').val();
-    userConfig.username = username;
-    userConfig.password = password;
-    console.log(`Username: ${username}, Password: ${password}, ConfirmPassword: ${confirmPassword}`);
+    let userConfig = {
+        'username': username,
+        'password': password
+    };
+    //console.log(`Username: ${username}, Password: ${password}, ConfirmPassword: ${confirmPassword}`);
     if (onSignUpPage) {
         // check if username is valid
         let err;
@@ -80,6 +77,9 @@ function sendLogin() {
                 return;
             }
 
+            var header = "Basic " + btoa(userConfig.username + ":" + userConfig.password)
+            document.cookie = "Authorization=" + header;
+
             console.log("Success");
 
             // Redirect to main page
@@ -93,7 +93,6 @@ function sendLogin() {
                 error: function (err) {
                 }
             })
-
         }
     }
     else {
@@ -120,9 +119,38 @@ function sendLogin() {
             return;
         }
 
-        window.location.replace("/play");
+        var header = "Basic " + btoa(userConfig.username + ":" + userConfig.password)
+        document.cookie = "Authorization=" + header;
+
+        $.ajax({
+            url: '/play',
+            type: 'GET',
+            beforeSend: function(xhr){
+                xhr.setRequestHeader("Authorization", getAuthCookie())
+            },
+
+            success: function(result){
+                console.log(result);
+                window.location.replace("/play");
+            },
+            error: function(err){
+            }
+        })
     }
 }
+
+function getAuthCookie() {
+    var cn = "Authorization=";
+    var idx = document.cookie.indexOf(cn)
+
+    if (idx != -1) {
+        var end = document.cookie.indexOf(";", idx + 1);
+        if (end == -1) end = document.cookie.length;
+        return unescape(document.cookie.substring(idx + cn.length, end));
+    } else {
+        return "";
+   }
+ }
 
 /*
 * returns Valid if the username is valid and

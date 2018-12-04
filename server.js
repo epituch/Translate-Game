@@ -2,6 +2,7 @@
 
 let express = require('express');
 var bodyParser = require('body-parser');
+var cookieParser = require('cookie-parser');
 let path = require('path');
 let app = express();
 let db = require('./database.js');
@@ -9,6 +10,7 @@ let languages = require("./languages.js")
 let googleTranslate = require('google-translate')('AIzaSyD253F7dYqiZbuSBAGl7DJYOLgMYUz1G4U');
 
 app.use(bodyParser.json());
+app.use(cookieParser())
 app.use(express.static(path.join(__dirname, 'mainpage')));
 app.use(express.static(path.join(__dirname, 'loginpage')));
 app.use(express.static(path.join(__dirname, 'leaderboardpage')));
@@ -23,7 +25,12 @@ app.get('/', (req, res) => {
 });
 
 app.get('/login', (req, res) => {
-    res.sendFile('loginpage/loginpage.html', { "root": __dirname });
+    authorize(req, function(data) {
+
+        if(data == 401)
+            return res.sendFile('loginpage/loginpage.html', { "root": __dirname });
+        return res.redirect('/play');
+    });
 });
 
 // TODO fix this, this is probably the wrong way to send assests
@@ -84,7 +91,6 @@ app.post('/verify_user', function (req, res) {
             return false;
         }
 
-        console.log(req.body)
         let queryString = "SELECT username, password FROM tparty_scores WHERE username='" + req.body.username + "'";
         db.query(conn, queryString, function (ierr, ires) {
             if (ierr) {
@@ -111,36 +117,47 @@ app.post('/verify_user', function (req, res) {
 // TODO: Add authorization after signup or login
 
 app.get('/get_langs', (req, res) => {
-    var names = languages.getLanguageNames();
-    res.send(names);
+
+    authorize(req, function(data) {
+        if(data == 401)
+            return res.status(401).redirect('/login');
+
+        var names = languages.getLanguageNames();
+        res.send(names);
+    });
 });
 
 app.get('/translate_score', (req, res) => {
 
-    console.log(req.query)
+    authorize(req, function(data) {
+        if(data == 401)
+            return res.status(401).redirect('/login');
 
-    var translate_list = req.query.languages.split(",");
-    var sentence = req.query.sentence;
-    var lang_codes = [];
-    var response = {};
-    var averageWeight = 0;
-    for (var i = 0; i < translate_list.length; i++) {
-        lang_codes.push(languages.getCode(translate_list[i]));
-        averageWeight += languages.getWeight(translate_list[i]);
-    }
-    averageWeight = averageWeight / translate_list.length;
+        if(!req.query.languages || !req.query.sentence)
+            return res.status(400).send("Bad Request!");
 
-    translateAsync(sentence, lang_codes).then(function (result) {
-        console.log(result)
+        var translate_list = req.query.languages.split(",");
+        var sentence = req.query.sentence;
+        var lang_codes = [];
+        var response = {};
 
-        // TODO: Add language weights to this calculation
-        var score = 1+ Math.round(averageWeight * levenDistance(sentence, result) * 100 * 2 / sentence.length)
+        for (var i = 0; i < translate_list.length; i++) {
+            lang_codes.push(languages.getCode(translate_list[i]));
+          averageWeight += languages.getWeight(translate_list[i]);
+        }
+        averageWeight = averageWeight / translate_list.length;
+      
+        translateAsync(sentence, lang_codes).then(function(result) {
 
-        response['sentence'] = result;
-        response['score'] = score;
 
-        res.send(response);
-    })
+            var score = Math.round((averageWeight+1) * levenDistance(sentence, result) * 100 * 2 / sentence.length)
+
+            response['sentence'] = result;
+            response['score'] = score;
+
+            res.send(response);
+        })
+    });
 });
 
 function translate(sentence, from, lang) {
@@ -206,29 +223,103 @@ Array.matrix = function (numrows, numcols, initial) {
 }
 
 app.get('/leaderboarddata', function (req, res) {
-    db.init(function (err, conn) {
-        if (err) {
-            console.error('Init Error:' + err);
-            return false;
-        }
 
-        let queryString = "SELECT username, score FROM tparty_scores ORDER BY score DESC";
-        db.query(conn, queryString, function (ierr, ires) {
-            if (ierr) {
-                console.log('Query Error: ' + ierr)
-                res.send({ status: 'Error/INVALID!' });
+    authorize(req, function(data) {
+        if(data == 401)
+            return res.status(401).redirect('/login');
+
+        db.init(function (err, conn) {
+            if (err) {
+                console.error('Init Error:' + err);
                 return false;
             }
 
-            res.send(ires);
+            let queryString = "SELECT username, score FROM tparty_scores ORDER BY score DESC";
+            db.query(conn, queryString, function (ierr, ires) {
+                if (ierr) {
+                    console.log('Query Error: ' + ierr)
+                    res.send({ status: 'Error/INVALID!' });
+                    return false;
+                }
+
+                res.send(ires);
+            });
         });
     });
 });
 
 app.get('/play', (req, res) => {
-    res.sendFile('mainpage/mainpage.html', { "root": __dirname });
+
+    authorize(req, function(data) {
+        if(data == 401)
+            return res.status(401).redirect('/login');
+
+        return res.sendFile('mainpage/mainpage.html', { "root": __dirname });
+    });
 });
 
 app.get('/leaderboard', (req, res) => {
-    res.sendFile('leaderboardpage/leaderboard.html', { "root": __dirname });
+
+    authorize(req, function(data) {
+
+        if(data == 401)
+            return res.status(401).redirect('/login');
+
+        return res.sendFile('leaderboardpage/leaderboard.html', { "root": __dirname });
+    });
 });
+
+let authorize = function(request, callback) {
+    var auth = request.get("authorization");
+    var cookieAuth = request.cookies.Authorization;
+
+    if(!auth && !cookieAuth)
+        callback(401);
+    else
+    {
+
+        // Get credentails
+        var credentials = []
+        var cookieCreds = []
+        if(auth)
+        {
+            credentials = Buffer.from(auth.split(" ").pop(), "base64").toString("ascii").split(":");
+        }
+        else
+        {
+            cookieCreds = Buffer.from(cookieAuth.split(" ").pop(), "base64").toString("ascii").split(":");
+        }
+
+        db.init(function (err, conn) {
+            if (err) {
+                console.error('Init Error:' + err);
+                return false;
+            }
+
+            let queryString;
+            if(auth)
+            {
+                queryString = "SELECT password FROM tparty_scores WHERE username='" + credentials[0] + "'";
+            }
+            else
+            {
+                queryString = "SELECT password FROM tparty_scores WHERE username='" + cookieCreds[0] + "'";
+            }
+            db.query(conn, queryString, function (ierr, ires) {
+                if (ierr) {
+                    console.log('Query Error: ' + ierr)
+                    return false;
+                }
+
+                if(ires[0].password == credentials[1] || ires[0].password == cookieCreds[1])
+                {
+                    callback(200);
+                }
+                else
+                {
+                    callback(401);
+                }
+            });
+        });
+    }
+};
