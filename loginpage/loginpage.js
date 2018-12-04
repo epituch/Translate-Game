@@ -65,18 +65,17 @@ function sendLogin() {
                 data: JSON.stringify(userConfig),
                 contentType: "application/json; charset=utf-8",
 
-                success: function(result){
+                success: function (result) {
                     console.log(result)
                     servResponse = result;
 
                 },
-                error: function(err){
+                error: function (err) {
                     console.log('Error: ${err}')
                 }
             })
 
-            if(servResponse.status != "VALID")
-            {
+            if (servResponse.status != "VALID") {
                 alert("Username already exists");
                 return;
             }
@@ -88,10 +87,10 @@ function sendLogin() {
                 url: '/play',
                 type: 'GET',
 
-                success: function(result){
+                success: function (result) {
                     window.location.replace("/play")
                 },
-                error: function(err){
+                error: function (err) {
                 }
             })
 
@@ -107,17 +106,16 @@ function sendLogin() {
             data: JSON.stringify(userConfig),
             contentType: "application/json; charset=utf-8",
 
-            success: function(result){
+            success: function (result) {
                 servResponse = result;
                 console.log(servResponse);
             },
-            error: function(err){
+            error: function (err) {
                 console.log('Error:' + JSON.stringify(err))
             }
         })
 
-        if(servResponse.status != "VALID")
-        {
+        if (servResponse.status != "VALID") {
             alert("Username/Password is invalid.")
             return;
         }

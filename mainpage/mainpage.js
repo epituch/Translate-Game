@@ -9,49 +9,49 @@ let translateConfig = {
     languages: ''
 };
 
-function translateScore(){
-  var servResponse;
-  $.ajax({
-      url: '/translate_score',
-      type: 'GET',
-      async: false,
-      data: {
-        sentence: translateConfig["sentence"],
-        languages: translateConfig["languages"]
-      },
-      contentType: "application/json; charset=utf-8",
+function translateScore() {
+    var servResponse;
+    $.ajax({
+        url: '/translate_score',
+        type: 'GET',
+        async: false,
+        data: {
+            sentence: translateConfig["sentence"],
+            languages: translateConfig["languages"]
+        },
+        contentType: "application/json; charset=utf-8",
 
-      success: function(result){
-          console.log(result)
-          servResponse = result;
+        success: function (result) {
+            console.log(result)
+            servResponse = result;
 
-      },
-      error: function(err){
-          console.log('Error: ${err}')
-      }
-  })
-  return servResponse;
+        },
+        error: function (err) {
+            console.log('Error: ${err}')
+        }
+    })
+    return servResponse;
 
 }
 /*
 *   Gets the current language list
 */
-function getLanguageList(){
-  //Get the language list
-  var servResponse;
-  $.ajax({
-      url: '/get_langs',
-      type: 'GET',
-      async: false,
+function getLanguageList() {
+    //Get the language list
+    var servResponse;
+    $.ajax({
+        url: '/get_langs',
+        type: 'GET',
+        async: false,
 
-      success: function(result){
-          servResponse = result;
-      },
-      error: function(err){
-          console.log('Error: ${err}')
-      }
-  })
-  return servResponse;
+        success: function (result) {
+            servResponse = result;
+        },
+        error: function (err) {
+            console.log('Error: ${err}')
+        }
+    })
+    return servResponse;
 }
 
 /*
@@ -110,9 +110,9 @@ function getSelectedLanguages() {
     return languageList;
 }
 
-function getText(){
-  let fullText = $('#text-box').val();
-  return fullText;
+function getText() {
+    let fullText = $('#text-box').val();
+    return fullText;
 }
 
 $(document).ready(() => {
@@ -123,7 +123,7 @@ $(document).ready(() => {
     $('#garble-text-btn').click(() => {
         $('#results').css('visibility', 'visible');
         translateConfig["sentence"] = getText();
-        translateConfig["languages"] =  getSelectedLanguages();
+        translateConfig["languages"] = getSelectedLanguages();
         let response = translateScore();
         $('#translated-text').html(response["sentence"]);
         $('#score').html(response["score"]);
@@ -135,7 +135,7 @@ $(document).ready(() => {
             debounceBool = false;
             addToListOfLanguages();
             // this prevents the function being called by the enter listener
-            setTimeout( () => {
+            setTimeout(() => {
                 debounceBool = true;
             }, 400)
         }

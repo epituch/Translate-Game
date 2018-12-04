@@ -21,16 +21,16 @@ function setTable(dbData) {
     let username;
     let score;
     for (let i = 0; i < 20; i++) {
-        if(dbData[i] !== undefined){
+        if (dbData[i] !== undefined) {
             // object exists so just print it out
             username = dbData[i].username === undefined ? "" : dbData[i].username;
             score = (dbData[i].score === undefined || dbData[i].score === 0) ? "-" : dbData[i].score;
         }
-        else{
+        else {
             // object does not exist
             username = "";
             score = "";
         }
-        $('#table-head').append("<tr><td>" + (i+1) + "</td><td>" + username + "</td><td>" + score + "</td></tr>");
+        $('#table-head').append("<tr><td>" + (i + 1) + "</td><td>" + username + "</td><td>" + score + "</td></tr>");
     }
 }

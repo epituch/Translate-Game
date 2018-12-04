@@ -124,7 +124,7 @@ app.get('/translate_score', (req, res) => {
         lang_codes.push(languages.getCode(translate_list[i]));
     }
 
-    translateAsync(sentence, lang_codes).then(function(result) {
+    translateAsync(sentence, lang_codes).then(function (result) {
         console.log(result)
 
         // TODO: Add language weights to this calculation
