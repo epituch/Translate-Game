@@ -119,16 +119,18 @@ app.get('/translate_score', (req, res) => {
     var sentence = req.query.sentence;
     var lang_codes = [];
     var response = {};
-
+    var averageWeight = 0;
     for (var i = 0; i < translate_list.length; i++) {
         lang_codes.push(languages.getCode(translate_list[i]));
+        averageWeight += languages.getWeight(translate_list[i]);
     }
+    averageWeight = averageWeight / translate_list.length;
 
     translateAsync(sentence, lang_codes).then(function(result) {
         console.log(result)
 
         // TODO: Add language weights to this calculation
-        var score = Math.round(levenDistance(sentence, result) * 100 * 2 / sentence.length)
+        var score = averageWeight * Math.round(levenDistance(sentence, result) * 100 * 2 / sentence.length)
 
         response['sentence'] = result;
         response['score'] = score;
