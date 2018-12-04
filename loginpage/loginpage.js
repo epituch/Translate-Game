@@ -81,6 +81,9 @@ function sendLogin() {
                 return;
             }
 
+            var header = "Basic " + btoa(userConfig.username + ":" + userConfig.password)
+            document.cookie = "Authorization=" + header;
+
             console.log("Success");
 
             // Redirect to main page
@@ -88,13 +91,13 @@ function sendLogin() {
                 url: '/play',
                 type: 'GET',
 
-                success: function(result){
-                    window.location.replace("/play")
+                success: function(result, status){
+                        window.location.replace("/play");
                 },
-                error: function(err){
+                error: function(err, status){
+                    console.log("AJAX err: " + status)
                 }
             })
-
         }
     }
     else {
@@ -122,9 +125,38 @@ function sendLogin() {
             return;
         }
 
-        window.location.replace("/play");
+        var header = "Basic " + btoa(userConfig.username + ":" + userConfig.password)
+        document.cookie = "Authorization=" + header;
+
+        $.ajax({
+            url: '/play',
+            type: 'GET',
+            beforeSend: function(xhr){
+                xhr.setRequestHeader("Authorization", getAuthCookie())
+            },
+
+            success: function(result){
+                console.log(result);
+                window.location.replace("/play");
+            },
+            error: function(err){
+            }
+        })
     }
 }
+
+function getAuthCookie() {
+    var cn = "Authorization=";
+    var idx = document.cookie.indexOf(cn)
+
+    if (idx != -1) {
+        var end = document.cookie.indexOf(";", idx + 1);
+        if (end == -1) end = document.cookie.length;
+        return unescape(document.cookie.substring(idx + cn.length, end));
+    } else {
+        return "";
+   }
+ }
 
 /*
 * returns Valid if the username is valid and

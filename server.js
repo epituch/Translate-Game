@@ -2,6 +2,7 @@
 
 let express = require('express');
 var bodyParser = require('body-parser');
+var cookieParser = require('cookie-parser');
 let path = require('path');
 let app = express();
 let db = require('./database.js');
@@ -9,6 +10,7 @@ let languages = require("./languages.js")
 let googleTranslate = require('google-translate')('AIzaSyD253F7dYqiZbuSBAGl7DJYOLgMYUz1G4U');
 
 app.use(bodyParser.json());
+app.use(cookieParser())
 app.use(express.static(path.join(__dirname, 'mainpage')));
 app.use(express.static(path.join(__dirname, 'loginpage')));
 app.use(express.static(path.join(__dirname, 'leaderboardpage')));
@@ -80,7 +82,6 @@ app.post('/verify_user', function (req, res) {
             return false;
         }
 
-        console.log(req.body)
         let queryString = "SELECT username, password FROM tparty_scores WHERE username='" + req.body.username + "'";
         db.query(conn, queryString, function (ierr, ires) {
             if (ierr) {
@@ -110,7 +111,7 @@ app.get('/get_langs', (req, res) => {
 
     authorize(req, function(data) {
         if(data == 401)
-            return res.status(401).send("Authorization Required");
+            return res.status(401).redirect('/login');
 
         var names = languages.getLanguageNames();
         res.send(names);
@@ -119,11 +120,9 @@ app.get('/get_langs', (req, res) => {
 
 app.get('/translate_score', (req, res) => {
 
-    console.log(req.query)
-
     authorize(req, function(data) {
         if(data == 401)
-            return res.status(401).send("Authorization Required");
+            return res.status(401).redirect('/login');
 
         if(!req.query.languages || !req.query.sentence)
             return res.status(400).send("Bad Request!");
@@ -138,9 +137,7 @@ app.get('/translate_score', (req, res) => {
         }
 
         translateAsync(sentence, lang_codes).then(function(result) {
-            console.log(result)
 
-            // TODO: Add language weights to this calculation
             var score = Math.round(levenDistance(sentence, result) * 100 * 2 / sentence.length)
 
             response['sentence'] = result;
@@ -217,7 +214,7 @@ app.get('/leaderboarddata', function (req, res) {
 
     authorize(req, function(data) {
         if(data == 401)
-            return res.status(401).send("Authorization Required");
+            return res.status(401).redirect('/login');
 
         db.init(function (err, conn) {
             if (err) {
@@ -243,7 +240,7 @@ app.get('/play', (req, res) => {
 
     authorize(req, function(data) {
         if(data == 401)
-            return res.status(401).send("Authorization Required");
+            return res.status(401).redirect('/login');
 
         return res.sendFile('mainpage/mainpage.html', { "root": __dirname });
     });
@@ -254,7 +251,7 @@ app.get('/leaderboard', (req, res) => {
     authorize(req, function(data) {
 
         if(data == 401)
-            return res.status(401).send("Authorization Required");
+            return res.status(401).redirect('/login');
 
         return res.sendFile('leaderboardpage/leaderboard.html', { "root": __dirname });
     });
@@ -262,30 +259,55 @@ app.get('/leaderboard', (req, res) => {
 
 let authorize = function(request, callback) {
     var auth = request.get("authorization");
+    var cookieAuth = request.cookies.Authorization;
 
-    if(!auth)
+    if(!auth && !cookieAuth)
         callback(401);
+    else
+    {
 
-    // Get credentails
-    var credentials = Buffer.from(auth.split(" ").pop(), "base64").toString("ascii").split(":");
-
-    db.init(function (err, conn) {
-        if (err) {
-            console.error('Init Error:' + err);
-            return false;
+        // Get credentails
+        var credentials = []
+        var cookieCreds = []
+        if(auth)
+        {
+            credentials = Buffer.from(auth.split(" ").pop(), "base64").toString("ascii").split(":");
+        }
+        else
+        {
+            cookieCreds = Buffer.from(cookieAuth.split(" ").pop(), "base64").toString("ascii").split(":");
         }
 
-        let queryString = "SELECT password FROM tparty_scores WHERE username='" + credentials[0] + "'";
-        db.query(conn, queryString, function (ierr, ires) {
-            if (ierr) {
-                console.log('Query Error: ' + ierr)
+        db.init(function (err, conn) {
+            if (err) {
+                console.error('Init Error:' + err);
                 return false;
             }
 
-            if(ires[0].password == credentials[1])
-                callback(200);
+            let queryString;
+            if(auth)
+            {
+                queryString = "SELECT password FROM tparty_scores WHERE username='" + credentials[0] + "'";
+            }
             else
-                callback(401);
+            {
+                queryString = "SELECT password FROM tparty_scores WHERE username='" + cookieCreds[0] + "'";
+            }
+            db.query(conn, queryString, function (ierr, ires) {
+                if (ierr) {
+                    console.log('Query Error: ' + ierr)
+                    return false;
+                }
+
+                if(ires[0].password == credentials[1] || ires[0].password == cookieCreds[1])
+                {
+                    callback(200);
+                }
+                else
+                {
+                    callback(401);
+                }
+            });
         });
-    });
+    }
 };
