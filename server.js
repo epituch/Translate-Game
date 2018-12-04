@@ -134,7 +134,7 @@ app.get('/translate_score', (req, res) => {
         console.log(result)
 
         // TODO: Add language weights to this calculation
-        var score = averageWeight * Math.round(levenDistance(sentence, result) * 100 * 2 / sentence.length)
+        var score = 1+ Math.round(averageWeight * levenDistance(sentence, result) * 100 * 2 / sentence.length)
 
         response['sentence'] = result;
         response['score'] = score;
