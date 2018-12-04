@@ -9,49 +9,48 @@ let translateConfig = {
     languages: ''
 };
 
-function translateScore(){
-  var servResponse;
-  $.ajax({
-      url: '/translate_score',
-      type: 'GET',
-      async: false,
-      data: {
-        sentence: translateConfig["sentence"],
-        languages: translateConfig["languages"]
-      },
-      contentType: "application/json; charset=utf-8",
+function translateScore() {
+    var servResponse;
+    $.ajax({
+        url: '/translate_score',
+        type: 'GET',
+        data: {
+            sentence: translateConfig["sentence"],
+            languages: translateConfig["languages"]
+        },
+        contentType: "application/json; charset=utf-8",
 
-      success: function(result){
-          console.log(result)
-          servResponse = result;
-
-      },
-      error: function(err){
-          console.log('Error: ${err}')
-      }
-  })
-  return servResponse;
-
+        success: function (result) {
+            console.log(result);
+            $('#loading-gif').css('display', 'none');
+            $('#results').css('visibility', 'visible');
+            $('#translated-text').html(result["sentence"]);
+            $('#score').html(result["score"]);
+        },
+        error: function (err) {
+            console.log(`Error: ${err}`)
+        }
+    });
 }
 /*
 *   Gets the current language list
 */
-function getLanguageList(){
-  //Get the language list
-  var servResponse;
-  $.ajax({
-      url: '/get_langs',
-      type: 'GET',
-      async: false,
+function getLanguageList() {
+    //Get the language list
+    var servResponse;
+    $.ajax({
+        url: '/get_langs',
+        type: 'GET',
+        async: false,
 
-      success: function(result){
-          servResponse = result;
-      },
-      error: function(err){
-          console.log('Error: ${err}')
-      }
-  })
-  return servResponse;
+        success: function (result) {
+            servResponse = result;
+        },
+        error: function (err) {
+            console.log(`Error: ${err}`)
+        }
+    })
+    return servResponse;
 }
 
 /*
@@ -110,9 +109,9 @@ function getSelectedLanguages() {
     return languageList;
 }
 
-function getText(){
-  let fullText = $('#text-box').val();
-  return fullText;
+function getText() {
+    let fullText = $('#text-box').val();
+    return fullText;
 }
 
 $(document).ready(() => {
@@ -121,12 +120,11 @@ $(document).ready(() => {
     $('.sidenav').sidenav();
     $(".dropdown-trigger").dropdown();
     $('#garble-text-btn').click(() => {
-        $('#results').css('visibility', 'visible');
+        $('#results').css('visibility', 'hidden');
+        $('#loading-gif').css('display', 'block');
         translateConfig["sentence"] = getText();
-        translateConfig["languages"] =  getSelectedLanguages();
-        let response = translateScore();
-        $('#translated-text').html(response["sentence"]);
-        $('#score').html(response["score"]);
+        translateConfig["languages"] = getSelectedLanguages();
+        translateScore();
     });
 
     $('input.autocomplete').autocomplete({
@@ -135,7 +133,7 @@ $(document).ready(() => {
             debounceBool = false;
             addToListOfLanguages();
             // this prevents the function being called by the enter listener
-            setTimeout( () => {
+            setTimeout(() => {
                 debounceBool = true;
             }, 400)
         }

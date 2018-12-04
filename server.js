@@ -42,6 +42,10 @@ app.get('/assets/background.png', (req, res) => {
     res.sendFile('assets/background.png', { "root": __dirname });
 });
 
+app.get('/assets/loading.gif', (req, res) => {
+    res.sendFile('assets/loading.gif', { "root": __dirname });
+});
+
 app.post('/new_user', function (req, res) {
 
     let queryString;
@@ -139,11 +143,14 @@ app.get('/translate_score', (req, res) => {
 
         for (var i = 0; i < translate_list.length; i++) {
             lang_codes.push(languages.getCode(translate_list[i]));
+          averageWeight += languages.getWeight(translate_list[i]);
         }
-
+        averageWeight = averageWeight / translate_list.length;
+      
         translateAsync(sentence, lang_codes).then(function(result) {
 
-            var score = Math.round(levenDistance(sentence, result) * 100 * 2 / sentence.length)
+
+            var score = Math.round((averageWeight+1) * levenDistance(sentence, result) * 100 * 2 / sentence.length)
 
             response['sentence'] = result;
             response['score'] = score;
