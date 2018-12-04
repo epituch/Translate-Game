@@ -25,7 +25,12 @@ app.get('/', (req, res) => {
 });
 
 app.get('/login', (req, res) => {
-    res.sendFile('loginpage/loginpage.html', { "root": __dirname });
+    authorize(req, function(data) {
+
+        if(data == 401)
+            return res.sendFile('loginpage/loginpage.html', { "root": __dirname });
+        return res.redirect('/play');
+    });
 });
 
 // TODO fix this, this is probably the wrong way to send assests

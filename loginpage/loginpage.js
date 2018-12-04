@@ -1,8 +1,3 @@
-let userConfig = {
-    username: '',
-    password: ''
-};
-
 $(document).ready(() => {
     $('#signup-btn').click(signUp);
     $('#signin-btn').click(signIn);
@@ -34,9 +29,11 @@ function sendLogin() {
     let username = $('#username').val();
     let password = $('#password').val();
     let confirmPassword = $('#confirm-password').val();
-    userConfig.username = username;
-    userConfig.password = password;
-    console.log(`Username: ${username}, Password: ${password}, ConfirmPassword: ${confirmPassword}`);
+    let userConfig = {
+        'username': username,
+        'password': password
+    };
+    //console.log(`Username: ${username}, Password: ${password}, ConfirmPassword: ${confirmPassword}`);
     if (onSignUpPage) {
         // check if username is valid
         let err;
