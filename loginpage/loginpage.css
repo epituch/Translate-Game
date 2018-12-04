@@ -29,6 +29,10 @@ body {
     margin: 2% auto 10%;
 }
 
+#confirm-password {
+    display: none;
+}
+
 .input-field {
     width: 75%;
     margin: 0 auto;

@@ -35,6 +35,10 @@ app.get('/assets/background.png', (req, res) => {
     res.sendFile('assets/background.png', { "root": __dirname });
 });
 
+app.get('/assets/loading.gif', (req, res) => {
+    res.sendFile('assets/loading.gif', { "root": __dirname });
+});
+
 app.post('/new_user', function (req, res) {
 
     let queryString;

@@ -14,7 +14,6 @@ function translateScore() {
     $.ajax({
         url: '/translate_score',
         type: 'GET',
-        async: false,
         data: {
             sentence: translateConfig["sentence"],
             languages: translateConfig["languages"]
@@ -22,16 +21,16 @@ function translateScore() {
         contentType: "application/json; charset=utf-8",
 
         success: function (result) {
-            console.log(result)
-            servResponse = result;
-
+            console.log(result);
+            $('#loading-gif').css('display', 'none');
+            $('#results').css('visibility', 'visible');
+            $('#translated-text').html(result["sentence"]);
+            $('#score').html(result["score"]);
         },
         error: function (err) {
-            console.log('Error: ${err}')
+            console.log(`Error: ${err}`)
         }
-    })
-    return servResponse;
-
+    });
 }
 /*
 *   Gets the current language list
@@ -48,7 +47,7 @@ function getLanguageList() {
             servResponse = result;
         },
         error: function (err) {
-            console.log('Error: ${err}')
+            console.log(`Error: ${err}`)
         }
     })
     return servResponse;
@@ -121,12 +120,11 @@ $(document).ready(() => {
     $('.sidenav').sidenav();
     $(".dropdown-trigger").dropdown();
     $('#garble-text-btn').click(() => {
-        $('#results').css('visibility', 'visible');
+        $('#results').css('visibility', 'hidden');
+        $('#loading-gif').css('display', 'block');
         translateConfig["sentence"] = getText();
         translateConfig["languages"] = getSelectedLanguages();
-        let response = translateScore();
-        $('#translated-text').html(response["sentence"]);
-        $('#score').html(response["score"]);
+        translateScore();
     });
 
     $('input.autocomplete').autocomplete({
