@@ -309,14 +309,12 @@ let authorize = function (request, callback) {
                     return false;
                 }
 
-                if(!ires[0])
-                {
+                if (!ires[0]) {
                     callback(401);
                     return;
                 }
 
-                if(ires[0].password == credentials[1])
-                {
+                if (ires[0].password == credentials[1]) {
                     callback(200);
                 }
                 else {

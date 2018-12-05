@@ -529,9 +529,8 @@ var langs = [
 function getCode(desiredLang) {
     desiredLang = desiredLang.toString().toLowerCase();
 
-    for(var i = 0;i < langs.length;i++)
-    {
-        if(langs[i].name.toLowerCase() == desiredLang)
+    for (var i = 0; i < langs.length; i++) {
+        if (langs[i].name.toLowerCase() == desiredLang)
             return langs[i].language
     }
     return false
@@ -552,9 +551,8 @@ function getWeight(desiredLang) {
         return desiredLang;
     }
 
-    for(var i = 0;i < langs.length;i++)
-    {
-        if(langs[i].name.toLowerCase() == desiredLang)
+    for (var i = 0; i < langs.length; i++) {
+        if (langs[i].name.toLowerCase() == desiredLang)
             return langs[i].score
     }
     return false
@@ -563,8 +561,7 @@ function getWeight(desiredLang) {
 function getLanguageNames() {
 
     var newObject = {};
-    for(var i = 0;i < langs.length;i++)
-    {
+    for (var i = 0; i < langs.length; i++) {
         newObject[langs[i].name] = null
     }
     return newObject

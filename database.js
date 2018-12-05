@@ -12,19 +12,18 @@ var databaseConfig = {
 module.exports = {
     init: function (next) {
         var sqlConnection = mysql.createConnection(databaseConfig)
-        sqlConnection.connect(function(err) {
-            if(err)
-            {
+        sqlConnection.connect(function (err) {
+            if (err) {
                 console.error('Error connecting ' + err.stack);
-                setTimeout(init((err, val)=>{}), 2000);
+                setTimeout(init((err, val) => { }), 2000);
             }
             else
                 next(null, sqlConnection);
         });
 
-        sqlConnection.on('error', function(err){
-            if(err.code == 'PROTOCOL_CONNECTION_LOST'){
-                init((err, val)=>{});
+        sqlConnection.on('error', function (err) {
+            if (err.code == 'PROTOCOL_CONNECTION_LOST') {
+                init((err, val) => { });
             }
             else
                 next(err)
@@ -32,8 +31,8 @@ module.exports = {
     },
 
     query: function (sqlConnection, sqlQuery, next) {
-        sqlConnection.query(sqlQuery, function(error, rows) {
-            if(error)
+        sqlConnection.query(sqlQuery, function (error, rows) {
+            if (error)
                 next(error)
 
             next(null, rows)

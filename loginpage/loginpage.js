@@ -146,15 +146,15 @@ function sendLogin() {
         $.ajax({
             url: '/play',
             type: 'GET',
-            beforeSend: function(xhr){
+            beforeSend: function (xhr) {
                 xhr.setRequestHeader("Authorization", getAuthCookie())
             },
 
-            success: function(result){
+            success: function (result) {
                 console.log(result);
                 window.location.replace("/play");
             },
-            error: function(err){
+            error: function (err) {
             }
         })
     }
@@ -170,8 +170,8 @@ function getAuthCookie() {
         return unescape(document.cookie.substring(idx + cn.length, end));
     } else {
         return "";
-   }
- }
+    }
+}
 
 /*
 * returns Valid if the username is valid and

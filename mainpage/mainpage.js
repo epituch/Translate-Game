@@ -115,7 +115,7 @@ function getText() {
 }
 
 function garbleText() {
-    
+
 }
 
 $(document).ready(() => {
