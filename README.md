@@ -22,3 +22,6 @@ brew install node
 
 ## Development Server
 To run the web server, first run `npm install` and then run `npm start`. Go to `http://localhost:6969/` to view your web server. The application automatically reloads any changes made to the scripts.
+
+## Website
+You can also checkout the application at `http://tparty.tk`
