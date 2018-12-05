@@ -124,6 +124,8 @@ $(document).ready(() => {
         $('#loading-gif').css('display', 'block');
         translateConfig["sentence"] = getText();
         translateConfig["languages"] = getSelectedLanguages();
+        // translateConfig["sentence"] = "Hello, my deodorant smells like my wallet and keys.";
+        // translateConfig["languages"] = "Polish,Igbo,French,English"
         translateScore();
     });
 
@@ -150,7 +152,8 @@ $(document).ready(() => {
     });
     $('#languages').sortable();
 
-    $('#logout').click(() => {
+    $('.logout').click(() => {
         document.cookie = "Authorization=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;"
+        window.location.replace('/login');
     });
 });

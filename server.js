@@ -25,9 +25,9 @@ app.get('/', (req, res) => {
 });
 
 app.get('/login', (req, res) => {
-    authorize(req, function(data) {
+    authorize(req, function (data) {
 
-        if(data == 401)
+        if (data == 401)
             return res.sendFile('loginpage/loginpage.html', { "root": __dirname });
         return res.redirect('/play');
     });
@@ -43,6 +43,10 @@ app.get('/assets/background.png', (req, res) => {
 
 app.get('/assets/loading.gif', (req, res) => {
     res.sendFile('assets/loading.gif', { "root": __dirname });
+});
+
+app.get('/assets/favicon.ico', (req, res) => {
+    res.sendFile('assets/favicon.ico', { "root": __dirname });
 });
 
 app.post('/new_user', function (req, res) {
@@ -115,8 +119,8 @@ app.post('/verify_user', function (req, res) {
 
 app.get('/get_langs', (req, res) => {
 
-    authorize(req, function(data) {
-        if(data == 401)
+    authorize(req, function (data) {
+        if (data == 401)
             return res.status(401).redirect('/login');
 
         var names = languages.getLanguageNames();
@@ -126,11 +130,11 @@ app.get('/get_langs', (req, res) => {
 
 app.get('/translate_score', (req, res) => {
 
-    authorize(req, function(data) {
-        if(data == 401)
+    authorize(req, function (data) {
+        if (data == 401)
             return res.status(401).redirect('/login');
 
-        if(!req.query.languages || !req.query.sentence)
+        if (!req.query.languages || !req.query.sentence)
             return res.status(400).send("Bad Request!");
 
         var translate_list = req.query.languages.split(",");
@@ -141,14 +145,13 @@ app.get('/translate_score', (req, res) => {
 
         for (var i = 0; i < translate_list.length; i++) {
             lang_codes.push(languages.getCode(translate_list[i]));
-          averageWeight += languages.getWeight(translate_list[i]);
+            averageWeight += languages.getWeight(translate_list[i]);
         }
         averageWeight = averageWeight / translate_list.length;
 
-        translateAsync(sentence, lang_codes).then(function(result) {
+        translateAsync(sentence, lang_codes).then(function (result) {
 
-
-            var score = Math.round((averageWeight * 100) * levenDistance(sentence, result)  * 1 / Math.sqrt(sentence.length))
+            var score = Math.round((averageWeight * 100) * levenDistance(sentence, result) * 1 / Math.sqrt(sentence.length))
 
             response['sentence'] = result;
             response['score'] = score;
@@ -239,8 +242,8 @@ Array.matrix = function (numrows, numcols, initial) {
 
 app.get('/leaderboarddata', function (req, res) {
 
-    authorize(req, function(data) {
-        if(data == 401)
+    authorize(req, function (data) {
+        if (data == 401)
             return res.status(401).redirect('/login');
 
         db.init(function (err, conn) {
@@ -265,8 +268,8 @@ app.get('/leaderboarddata', function (req, res) {
 
 app.get('/play', (req, res) => {
 
-    authorize(req, function(data) {
-        if(data == 401)
+    authorize(req, function (data) {
+        if (data == 401)
             return res.status(401).redirect('/login');
 
         return res.sendFile('mainpage/mainpage.html', { "root": __dirname });
@@ -275,23 +278,22 @@ app.get('/play', (req, res) => {
 
 app.get('/leaderboard', (req, res) => {
 
-    authorize(req, function(data) {
+    authorize(req, function (data) {
 
-        if(data == 401)
+        if (data == 401)
             return res.status(401).redirect('/login');
 
         return res.sendFile('leaderboardpage/leaderboard.html', { "root": __dirname });
     });
 });
 
-let authorize = function(request, callback) {
+let authorize = function (request, callback) {
 
     let info = getCredentials(request);
 
-    if(!info)
+    if (!info)
         callback(401);
-    else
-    {
+    else {
         var auth = info[0];
         var credentials = info[1];
         db.init(function (err, conn) {
@@ -307,12 +309,10 @@ let authorize = function(request, callback) {
                     return false;
                 }
 
-                if(ires[0].password == credentials[1])
-                {
+                if (ires[0].password == credentials[1]) {
                     callback(200);
                 }
-                else
-                {
+                else {
                     callback(401);
                 }
             });
@@ -325,18 +325,15 @@ function getCredentials(request) {
     var cookieAuth = request.cookies.Authorization;
     var credentials = []
 
-    if(auth)
-    {
+    if (auth) {
         credentials = Buffer.from(auth.split(" ").pop(), "base64").toString("ascii").split(":");
         return [auth, credentials];
     }
-    else if(cookieAuth)
-    {
+    else if (cookieAuth) {
         credentials = Buffer.from(cookieAuth.split(" ").pop(), "base64").toString("ascii").split(":");
         return [cookieAuth, credentials];
     }
-    else
-    {
+    else {
         return;
     }
 }
