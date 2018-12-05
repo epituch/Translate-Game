@@ -16,11 +16,19 @@ module.exports = {
             if(err)
             {
                 console.error('Error connecting ' + err.stack);
-                next(err);
+                setTimeout(init((err, val)=>{}), 2000);
             }
             else
                 next(null, sqlConnection);
         });
+
+        sqlConnection.on('error', function(err){
+            if(err.code == 'PROTOCOL_CONNECTION_LOST'){
+                init((err, val)=>{});
+            }
+            else
+                next(err)
+        })
     },
 
     query: function (sqlConnection, sqlQuery, next) {
