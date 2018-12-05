@@ -2,6 +2,22 @@ $(document).ready(() => {
     $('#signup-btn').click(signUp);
     $('#signin-btn').click(signIn);
     $('#start-btn').click(sendLogin);
+
+    $('#password').on('keyup', (event) => {
+        // listens for enter event inside the field
+        if (event.key === 'Enter' && !onSignUpPage) {
+            // key is enter add to list after verificiation
+            sendLogin();
+        }
+    });
+
+    $('#confirm-password').on('keyup', (event) => {
+        // listens for enter event inside the field
+        if (event.key === 'Enter' && onSignUpPage) {
+            // key is enter add to list after verificiation
+            sendLogin();
+        }
+    });
 });
 
 // variables to make it easy to keep track of where we are
