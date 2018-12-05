@@ -55,16 +55,19 @@ function sendLogin() {
         let err;
         if ((err = checkUserName(username)) != 'valid') {
             console.log('Username invalid');
-            alert(err);
+            $('#error-text').html(err);
+            $('#error-text').css('display', 'block');
             return;
         }
         else if ((err = checkPassword(password)) != 'valid') {
             console.log('Passowrd invalid');
-            alert(err);
+            $('#error-text').html(err);
+            $('#error-text').css('display', 'block');
             return;
         }
         else if (password != confirmPassword) {
-            alert("Passwords do not match");
+            $('#error-text').html(err);
+            $('#error-text').css('display', 'block');
             return;
         }
         else {
@@ -89,7 +92,8 @@ function sendLogin() {
             })
 
             if (servResponse.status != "VALID") {
-                alert("Username already exists");
+                $('#error-text').html("Username already exists");
+                $('#error-text').css('display', 'block');
                 return;
             }
 
@@ -131,7 +135,8 @@ function sendLogin() {
         })
 
         if (servResponse.status != "VALID") {
-            alert("Username/Password is invalid.")
+            $('#error-text').html("Username/Password is invalid");
+            $('#error-text').css('display', 'block');
             return;
         }
 
