@@ -162,7 +162,7 @@ app.get('/translate_score', (req, res) => {
                     return false;
                 }
 
-                let queryString = "UPDATE tparty_scores SET score=" + score + " WHERE username='" + getCredentials(req)[1][0] + "'";
+                let queryString = "UPDATE tparty_scores SET score=" + score + " WHERE username='" + getCredentials(req)[1][0] + "' AND score < " + score;
                 db.query(conn, queryString, function (ierr, ires) {
                     if (ierr) {
                         console.log('Query Error: ' + ierr)
