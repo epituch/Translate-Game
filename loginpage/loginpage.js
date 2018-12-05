@@ -5,7 +5,7 @@ $(document).ready(() => {
 });
 
 // variables to make it easy to keep track of where we are
-let onSignUpPage = true;
+let onSignUpPage = false;
 
 // click event for the sign up button
 function signUp() {

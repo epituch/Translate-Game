@@ -33,7 +33,6 @@ app.get('/login', (req, res) => {
     });
 });
 
-// TODO fix this, this is probably the wrong way to send assests
 app.get('/assets/TPartyLogo.png', (req, res) => {
     res.sendFile('assets/TPartyLogo.png', { "root": __dirname });
 });
@@ -114,8 +113,6 @@ app.post('/verify_user', function (req, res) {
     });
 });
 
-// TODO: Add authorization after signup or login
-
 app.get('/get_langs', (req, res) => {
 
     authorize(req, function(data) {
@@ -140,22 +137,40 @@ app.get('/translate_score', (req, res) => {
         var sentence = req.query.sentence;
         var lang_codes = [];
         var response = {};
+        let averageWeight = 0;
 
         for (var i = 0; i < translate_list.length; i++) {
             lang_codes.push(languages.getCode(translate_list[i]));
           averageWeight += languages.getWeight(translate_list[i]);
         }
         averageWeight = averageWeight / translate_list.length;
-      
+
         translateAsync(sentence, lang_codes).then(function(result) {
 
 
-            var score = Math.round((averageWeight+1) * levenDistance(sentence, result) * 100 * 2 / sentence.length)
+            var score = Math.round((averageWeight * 100) * levenDistance(sentence, result)  * 1 / Math.sqrt(sentence.length))
 
             response['sentence'] = result;
             response['score'] = score;
 
+            db.init(function (err, conn) {
+                if (err) {
+                    console.error('Init Error:' + err);
+                    return false;
+                }
+
+                let queryString = "UPDATE tparty_scores SET score=" + score + " WHERE username='" + getCredentials(req)[1][0] + "'";
+                db.query(conn, queryString, function (ierr, ires) {
+                    if (ierr) {
+                        console.log('Query Error: ' + ierr)
+                        res.send({ status: 'Error/INVALID!' });
+                        return false;
+                    }
+                });
+            });
+
             res.send(response);
+            // TODO: Update scores in sql
         })
     });
 });
@@ -270,48 +285,29 @@ app.get('/leaderboard', (req, res) => {
 });
 
 let authorize = function(request, callback) {
-    var auth = request.get("authorization");
-    var cookieAuth = request.cookies.Authorization;
 
-    if(!auth && !cookieAuth)
+    let info = getCredentials(request);
+
+    if(!info)
         callback(401);
     else
     {
-
-        // Get credentails
-        var credentials = []
-        var cookieCreds = []
-        if(auth)
-        {
-            credentials = Buffer.from(auth.split(" ").pop(), "base64").toString("ascii").split(":");
-        }
-        else
-        {
-            cookieCreds = Buffer.from(cookieAuth.split(" ").pop(), "base64").toString("ascii").split(":");
-        }
-
+        var auth = info[0];
+        var credentials = info[1];
         db.init(function (err, conn) {
             if (err) {
                 console.error('Init Error:' + err);
                 return false;
             }
 
-            let queryString;
-            if(auth)
-            {
-                queryString = "SELECT password FROM tparty_scores WHERE username='" + credentials[0] + "'";
-            }
-            else
-            {
-                queryString = "SELECT password FROM tparty_scores WHERE username='" + cookieCreds[0] + "'";
-            }
+            let queryString = "SELECT password FROM tparty_scores WHERE username='" + credentials[0] + "'";
             db.query(conn, queryString, function (ierr, ires) {
                 if (ierr) {
                     console.log('Query Error: ' + ierr)
                     return false;
                 }
 
-                if(ires[0].password == credentials[1] || ires[0].password == cookieCreds[1])
+                if(ires[0].password == credentials[1])
                 {
                     callback(200);
                 }
@@ -323,3 +319,24 @@ let authorize = function(request, callback) {
         });
     }
 };
+
+function getCredentials(request) {
+    var auth = request.get("authorization");
+    var cookieAuth = request.cookies.Authorization;
+    var credentials = []
+
+    if(auth)
+    {
+        credentials = Buffer.from(auth.split(" ").pop(), "base64").toString("ascii").split(":");
+        return [auth, credentials];
+    }
+    else if(cookieAuth)
+    {
+        credentials = Buffer.from(cookieAuth.split(" ").pop(), "base64").toString("ascii").split(":");
+        return [cookieAuth, credentials];
+    }
+    else
+    {
+        return;
+    }
+}
