@@ -13,6 +13,14 @@ body {
     margin: 5% auto;
 }
 
+#error-text {
+    color: red;
+    font-size: 20px;
+    text-align: center;
+    margin: 1%;
+    display: none;
+}
+
 #logo {
     margin-top: 5%;
 }
@@ -29,7 +37,7 @@ body {
     margin: 2% auto 10%;
 }
 
-#confirm-password {
+#confirm-div {
     display: none;
 }
 

@@ -29,7 +29,7 @@ function signUp() {
     $('#signin-btn').removeClass('disabled');
     $('#signup-btn').addClass('disabled');
     $('#start-btn').html('Get Started!');
-    $('#confirm-password').css('display', 'block');
+    $('#confirm-div').css('display', 'block');
 }
 
 // click event for the sign in button
@@ -38,7 +38,7 @@ function signIn() {
     $('#signup-btn').removeClass('disabled');
     $('#signin-btn').addClass('disabled');
     $('#start-btn').html('Login');
-    $('#confirm-password').css('display', 'none');
+    $('#confirm-div').css('display', 'none');
 }
 
 function sendLogin() {
