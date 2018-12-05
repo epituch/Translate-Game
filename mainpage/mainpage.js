@@ -114,6 +114,10 @@ function getText() {
     return fullText;
 }
 
+function garbleText() {
+    
+}
+
 $(document).ready(() => {
     languageList = getLanguageList();
     $('select').formSelect();
@@ -124,8 +128,6 @@ $(document).ready(() => {
         $('#loading-gif').css('display', 'block');
         translateConfig["sentence"] = getText();
         translateConfig["languages"] = getSelectedLanguages();
-        // translateConfig["sentence"] = "Hello, my deodorant smells like my wallet and keys.";
-        // translateConfig["languages"] = "Polish,Igbo,French,English"
         translateScore();
     });
 
@@ -148,6 +150,13 @@ $(document).ready(() => {
         }
         else {
             $('#error-div').css('display', 'none');
+        }
+    });
+    $('#text-box').on('keyup', (event) => {
+        // listens for enter event inside the field
+        if (event.key === 'Enter') {
+            // key is enter add to list after verificiation
+            $('#garble-text-btn').trigger('click');
         }
     });
     $('#languages').sortable();
